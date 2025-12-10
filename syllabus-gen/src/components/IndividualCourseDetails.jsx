@@ -46,8 +46,43 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
     const [editExpCont, setEditExpCont] = useState('');
 
 
-    //Experiments Section Handler Functions
+    {/* Module Update Function */}
+    async function handleEditModule(updatedModule) {
 
+        //Get the index of updated MODULE
+        const index = moduleEditForm[2];
+
+        // Update module in local array
+        const updatedModules = [...courseData.modules];
+        updatedModules[index] = updatedModule;
+        const updatedCourse = { ...courseData, modules: updatedModules };
+
+        // // Update in Supabase
+        // const { error } = await supabase
+        //     .from("courses")
+        //     .update({ modules: updatedModules })
+        //     .eq("id", courseData.id);
+
+        // if (error) {
+        //     console.error("Supabase update error:", error);
+        //     alert("Failed to update module in database.");
+        //     return;
+        // }
+
+
+        // Update local state
+        setCourseData(updatedCourse);
+        setCourses((prev) =>
+            prev.map((item) =>
+            item.courseCode === courseData.courseCode ? updatedCourse : item
+            )
+        );
+
+        //Close form after EDITING Module Detail
+        showModuleEditForm([false, null, null]);
+}
+
+    {/* Experiments Section Handler Functions */}
     //Adding new Experiment
     async function addNewExperiment(){
         if(!newExpCont || !newExpNo)
