@@ -1,6 +1,7 @@
-import { ArrowLeft, ChevronDown, ChevronUp, Download, Edit, Minus, Plus } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp, Download, Edit, Edit2, Minus, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import ModuleEditForm from "./ModuleEditForm";
+import { InputForm } from "./InputForm";
 
 export default function IndividualCourseDetails({courses,course_id,backToHome,setCourses}){
 

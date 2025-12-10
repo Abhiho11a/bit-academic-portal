@@ -429,7 +429,10 @@ export const Courses = [
   }
 ];
 
-export const DataScheme = {
+
+
+
+export const DataSchema = {
     sem:"",
     course_title:"",
     course_code:"",

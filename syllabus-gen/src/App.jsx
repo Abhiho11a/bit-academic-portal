@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import './App.css'
-import { Courses, DataScheme } from './data/data';
+import { Courses, DataSchema } from './data/data';
 import { Download, Link } from 'lucide-react'
 import Header from './components/Header';
 import { TableComponent } from './components/TableComponent';
 import IndividualCourseDetails from './components/IndividualCourseDetails';
+import { InputForm } from './components/InputForm';
 
 export default function App(){
 
+  const [formData,setFormData] = useState(DataSchema)
   const [courses,setCourses] = useState(Courses)
   const [department,setDepartment] = useState("CSE")
   const [loadingMsg,setLoadingMsg] = useState(null)
@@ -144,6 +146,17 @@ export default function App(){
           </div>
         </div>
       )}
+
+      {/* INPUT Form */}
+      {openForm && (
+        <InputForm
+        formData={formData}
+        setFormData={setFormData}
+        addSub={() => addSubjectDetails()}
+        editSubjectDetails={() => editSubjectDetails()}
+        closeForm={() => setOpenForm(false)}
+        />
+)}
 
       {/* IndividualCourseDetails.jsx */}
       {detailedView_id && (
