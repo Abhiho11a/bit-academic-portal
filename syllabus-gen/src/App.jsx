@@ -3,9 +3,11 @@ import './App.css'
 import { Courses, DataScheme } from './data/data';
 import { Download, Link } from 'lucide-react'
 import Header from './components/Header';
+import { TableComponent } from './components/TableComponent';
 
 export default function App(){
 
+  const [courses,setCourses] = useState(Courses)
   const [department,setDepartment] = useState("CSE")
   const [loadingMsg,setLoadingMsg] = useState(null)
   const [detailedView_id,setDetailedView_id] = useState(null)
@@ -133,7 +135,11 @@ export default function App(){
 
           {/* 3️⃣ Course Table */}
           <div className="w-full max-w-6xl mx-auto px-3 mt-6">
-              <div>Table Component Here</div>
+              <TableComponent
+              courses={courses}
+              setCourses={setCourses}
+              setDetailedView={setDetailedView_id}
+          />
           </div>
         </div>
       )}

@@ -1,6 +1,7 @@
 export const Courses = [
   // ⭐ COURSE 1 — Operating Systems
   {
+    id:1,
     department: "CSE",
     sem: 4,
     course_title: "Operating Systems",
@@ -87,7 +88,7 @@ export const Courses = [
   // ⭐ COURSE 2 — Operating Systems Principles
   {
     department: "CSE",
-    sem: 5,
+    sem: 2,
     course_title: "Operating Systems Principles",
     course_code: "CSD402",
     course_type: "Core (T)",
@@ -171,6 +172,7 @@ export const Courses = [
 
   // ⭐ COURSE 3 — Database Management Systems
   {
+    id:3,
     department: "ISE",
     sem: 5,
     course_title: "Database Management Systems",
@@ -256,6 +258,7 @@ export const Courses = [
 
   // ⭐ COURSE 4 — Introduction to Machine Learning
   {
+    id:4,
     department: "AIML",
     sem: 6,
     course_title: "Introduction to Machine Learning",
@@ -341,6 +344,7 @@ export const Courses = [
 
   // ⭐ COURSE 5 — Computer Networks
   {
+    id:5,
     department: "CSE",
     sem: 5,
     course_title: "Computer Networks",
