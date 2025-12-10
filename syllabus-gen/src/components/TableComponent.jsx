@@ -15,10 +15,10 @@ export function TableComponent({courses,setCourses,setDetailedView}){
                     <th className="hidden md:table-cell py-4 px-4 text-left text-white font-bold border-r border-blue-300">
                         Sem
                     </th>
-                    <th className="py-4 px-4 text-left text-white font-bold border-r border-blue-300">
+                    <th className="py-4 px-4 text-white font-bold border-r border-blue-300 text-center">
                         Course Title
                     </th>
-                    <th className="py-4 px-4 text-left text-white font-bold border-r border-blue-300">
+                    <th className="py-4 px-4 text-white font-bold border-r border-blue-300 text-center">
                         Course Code
                     </th>
                     <th className="hidden md:table-cell py-4 px-4 text-center text-white font-bold border-r border-blue-300">
@@ -64,7 +64,7 @@ export function TableComponent({courses,setCourses,setDetailedView}){
                             <div className="flex items-center justify-center gap-3">
                                 {/* VIEW BUTTON */}
                                 <button
-                                    
+                                    onClick={() => setDetailedView(course.id)}
                                     className="flex items-center gap-1 bg-slate-600 text-white hover:bg-slate-700 
                                                 rounded-lg py-1 px-2 text-sm transition cursor-pointer"
                                 >

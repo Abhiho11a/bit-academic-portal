@@ -4,6 +4,7 @@ import { Courses, DataScheme } from './data/data';
 import { Download, Link } from 'lucide-react'
 import Header from './components/Header';
 import { TableComponent } from './components/TableComponent';
+import IndividualCourseDetails from './components/IndividualCourseDetails';
 
 export default function App(){
 
@@ -142,6 +143,16 @@ export default function App(){
           />
           </div>
         </div>
+      )}
+
+      {/* IndividualCourseDetails.jsx */}
+      {detailedView_id && (
+        <IndividualCourseDetails
+        courses={courses}
+        course_id={detailedView_id}
+        setCourses={setCourses}
+        backToHome={() => setDetailedView_id(null)}
+        />
       )}
     </div>)
 }
