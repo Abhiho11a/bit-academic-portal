@@ -50,6 +50,166 @@ export default function App(){
         return "Engineering"
     }
   }
+
+  function askCourseType(msg) {
+  let type = window.prompt(
+    msg
+  );
+
+  // If user cancels → return null
+  if (type === null) return null;
+
+  type = type.trim().toLowerCase();
+
+  if (formData.course_type === "ESC" && (type === "" || (type !== "t" && type !== "tl"))) {
+    alert(`Please enter either: t or tl`);
+    return askCourseType(msg);  //ask again
+  }
+  if (formData.course_type === "AEC" && (type === "" || (type !== "t" && type !== "l"))) {
+    alert(`Please enter either: t or l`);
+    return askCourseType(msg);  //ask again
+  }
+
+  return type;
+}
+
+  {/* Function To ADD new Course Details */}
+  async function addSubjectDetails() {
+
+    // 1️⃣ CHECK IF EXACT PAIR EXISTS
+    // const { data: duplicate, error:dupError } = await supabase
+    //   .from("courses")
+    //   .select("*")
+    //   .eq("course_title", formData.course_title)
+    //   .eq("course_code", formData.course_code)
+    //   .maybeSingle();
+
+    // if (duplicate) {
+    //   alert(`Course "${formData.course_title}" with code "${formData.course_code}" already exists.`);
+    //   return;
+    // }
+
+    //
+    let updatedCType = formData.course_type;
+    switch(formData.course_type){
+      case "IPCC":
+      {
+        updatedCType += " (T+L)"
+        break
+      }
+      case ("OE"):
+      {
+        updatedCType += " (T)"
+        break
+      }
+      case ("PE"):
+      {
+        updatedCType += " (T)"
+        break
+      }
+      case ("PCC"):
+      {
+        updatedCType += " (T)"
+        break
+      }
+      case ("PCCL"):
+      {   
+        updatedCType += " (L)"
+        break
+      }
+      case ("ESC"):
+      {
+        let type = askCourseType("Is this IPCC course Theory or Theory+Lab? (Enter: t/tl)")
+        type.toLowerCase() == "t"?updatedCType+=" (T)":updatedCType+=" (T+L)"
+        break
+      }
+      case ("AEC"):
+      {
+        const type = askCourseType("Is this IPCC course Theory or Lab? (Enter: t/l)");
+        type.toLowerCase() == "t"?updatedCType+=" (T)":updatedCType+=" (L)"
+        break
+      }
+    }
+
+    // 2️⃣ INSERT NEW ROW
+    // const { error: insertError } = await supabase.from("courses").insert({
+    //   department: department,
+    //   sem: formData.sem,
+    //   course_title: formData.course_title,
+    //   course_code: formData.course_code,
+    //   course_type: updatedCType,
+    //   credits: formData.credits,
+    //   pedagogy: formData.pedagogy,
+    //   cie: formData.cie,
+    //   see: formData.see,
+    //   ltps: formData.ltps,
+    //   exam_hours: formData.exam_hours,
+    //   course_objectives: formData.course_objectives,
+    //   course_outcomes: formData.course_outcomes,
+    //   teaching_learning: formData.teaching_learning,
+    //   referral_links: formData.referral_links,
+    //   textbooks: formData.textbooks,
+    //   modules: formData.modules,
+    //   activity_based: formData.activity_based,
+    //   copoMapping:formData.copoMapping
+    // });
+
+    // if (insertError) {
+    //   alert("Insert failed: " + insertError.message);
+    //   console.log(insertError)
+    //   return;
+    // }
+
+    // setShowPopup({msg:"Added new Course..",type:"success"})
+
+
+    // fetchDataFromDb();
+
+    setFormData({sem:0,
+      course_title:"",
+      course_code:"",
+      course_type:"",
+      credits:0,
+      cie:0,
+      see:0,
+      ltps:"",
+      exam_hours:0,
+      course_objectives:"",
+      course_outcomes:"",
+      teaching_learning:"",
+      referral_links:"",
+      textbooks:[],
+      modules:[
+    {
+      "no": 1
+    },
+    {
+      "no": 2
+    },
+    {
+      "no": 3
+    },
+    {
+      "no": 4
+    },
+    {
+      "no": 5
+    }
+  ],
+      activity_based:"",
+      copoMapping: {
+    headers: ["PO1","PO2","PO3","PO4","PO5","PO6","PO7","PO8","PO9","PO10","PO11"],
+    rows: [
+      { co: "CO1", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
+      { co: "CO2", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
+      { co: "CO3", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
+      { co: "CO4", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
+      { co: "CO5", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
+    ]
+  } 
+});
+}
+
   return (
     <div>
       <Header/>

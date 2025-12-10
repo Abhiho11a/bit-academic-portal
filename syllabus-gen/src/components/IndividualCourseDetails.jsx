@@ -6,7 +6,13 @@ import { InputForm } from "./InputForm";
 export default function IndividualCourseDetails({courses,course_id,backToHome,setCourses}){
 
     //Retrieving particular course from courseData
-    const [courseData,setCourseData] = useState(courses.find(c => c.id === course_id))
+    const [courseData,setCourseData] = useState(null)
+
+    useEffect(() => {
+  const course = courses.find(c => c.id === course_id);
+  setCourseData(course);
+}, [course_id]);
+
     
     // Used to Show/hide download Options
     const [downloadMenu,setDownLoadMenu] = useState(false)
@@ -22,12 +28,111 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
     const [isMainSectionOpen, setIsMainSectionOpen] = useState(false);
     const [openModuleIndex, setOpenModuleIndex] = useState(null);
 
-    //
+
+    // Function To add TYPE of Course whether THEORY or LAB
+    function askCourseType(msg) {
+        //ALERT msg is displayed which is passed through Function
+        let type = window.prompt(msg);
+
+        // If user cancels → return null
+        if (type === null) return null;
+
+        type = type.trim().toLowerCase();
+
+        if (courseData.course_type === "ESC" && (type === "" || (type !== "t" && type !== "tl"))) {
+            alert(`Please enter either: t or tl`);
+            return askCourseType(msg);  //ask again
+        }
+        if (courseData.course_type === "AEC" && (type === "" || (type !== "t" && type !== "l"))) {
+            alert(`Please enter either: t or l`);
+            return askCourseType(msg);  //ask again
+        }
+
+        return type;
+}
+    async function editSubjectDetails() {
+        
+        let updatedCType = courseData.course_type;
+
+        switch(courseData.course_type){
+            case "IPCC":
+            {
+                updatedCType += " (T+L)"
+                break
+            }
+            case "OE":
+            {
+                updatedCType += " (T)"
+                break
+            }
+            case "PE":
+            {
+                updatedCType += " (T)"
+                break
+            }
+            case ("PCC"):
+            {
+                updatedCType += " (T)"
+                break
+            }
+            case ("PCCL"):
+            {
+                updatedCType += " (L)"
+                break
+            }
+            case ("ESC"):
+            {
+                const type = askCourseType("Is this IPCC course Theory or Theory+Lab? (Enter: t/tl)")
+                type.toLowerCase() == "t"?updatedCType+=" (T)":updatedCType+=" (T+L)"
+                break
+            }
+            case ("AEC"):
+            {
+                const type = askCourseType("Is this IPCC course Theory or Lab? (Enter: t/l)")
+                type.toLowerCase() == "t"?updatedCType+=" (T)":updatedCType+=" (L)"
+                break
+            }
+        }
+
+        // Update Course Type
+        const updatedData = { 
+            ...courseData,
+            course_type: updatedCType 
+        };
+
+        // // Update in Supabase
+        // const { error } = await supabase
+        //     .from("courses")
+        //     .update(updatedData)
+        //     .eq("id", courseData.id);
+
+        // if (error) {
+        //     alert("Error updating course: " + error.message);
+        //     return;
+        // }
+        
+
+        // Update individual page instantly
+        setCourseData(updatedData);
+        // Update course list in parent (App.jsx)
+        setCourses(prev =>
+            Array.isArray(prev)
+            ? prev.map(item =>
+                item.id === courseData.id ? updatedData : item)
+            : prev   // safeguard (if prev isn't array)
+        );
+
+        // 4️⃣ Close form
+        setEditForm("close");
+
+        //setShowPopup({msg:"Edited Course Details Successfully",type:"info"})
+}
+
     const toggleMainSection = () => {
         setIsMainSectionOpen(!isMainSectionOpen);
     };
 
-    //Modules Section handler Functions
+    {/* Modules Section handler Functions */}
 
     //Function to add NEW MODULE Details
     function addModulesDetails(ind){
