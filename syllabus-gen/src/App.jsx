@@ -2,10 +2,10 @@ import { useState } from 'react';
 import './App.css'
 import { Courses, DataSchema } from './data/data';
 import { Download, Link } from 'lucide-react'
-import Header from './components/Header';
-import { TableComponent } from './components/TableComponent';
-import IndividualCourseDetails from './components/IndividualCourseDetails';
-import { InputForm } from './components/InputForm';
+import Header from './components/common/Header';
+import { TableComponent } from './components/common/TableComponent';
+import IndividualCourseDetails from './pages/IndividualCourseDetails';
+import { InputForm } from './components/forms/InputForm';
 
 export default function App(){
 

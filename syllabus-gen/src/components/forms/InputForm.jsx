@@ -1,28 +1,22 @@
 import { X } from "lucide-react";
-import { useEffect } from "react";
 
 export function InputForm({formData,setFormData,addSub,editSub,closeForm}){
 
 
     {/* IF FormData doesnot contains COPO-Mapping Object then add to formData */}
-    useEffect(() => {
     if (!formData.copoMapping) {
-        setFormData(prev => ({
-            ...prev,
+        setFormData({...formData,
             copoMapping: {
-                headers: ["PO1","PO2","PO3","PO4","PO5","PO6","PO7","PO8","PO9","PO10","PO11"],
-                rows: [
-                    { co: "CO1", vals: Array(11).fill(""), pso1: "", pso2: "" },
-                    { co: "CO2", vals: Array(11).fill(""), pso1: "", pso2: "" },
-                    { co: "CO3", vals: Array(11).fill(""), pso1: "", pso2: "" },
-                    { co: "CO4", vals: Array(11).fill(""), pso1: "", pso2: "" },
-                    { co: "CO5", vals: Array(11).fill(""), pso1: "", pso2: "" },
-                ]
-            }
-        }));
+            headers: ["PO1","PO2","PO3","PO4","PO5","PO6","PO7","PO8","PO9","PO10","PO11"],
+            rows: [
+                { co: "CO1", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
+                { co: "CO2", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
+                { co: "CO3", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
+                { co: "CO4", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
+                { co: "CO5", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
+            ]}
+        });
     }
-}, [formData.copoMapping]);
-
 
     {/* Dynamic AUTHOR Details and TEXTBOOK Details Adding */}
     const authors = formData.textbooks || [];

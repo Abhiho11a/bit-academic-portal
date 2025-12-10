@@ -1,17 +1,12 @@
 import { ArrowLeft, ChevronDown, ChevronUp, Download, Edit, Edit2, Minus, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
-import ModuleEditForm from "./ModuleEditForm";
-import { InputForm } from "./InputForm";
+import ModuleEditForm from "../components/forms/ModuleEditForm";
+import { InputForm } from "../components/forms/InputForm";
 
 export default function IndividualCourseDetails({courses,course_id,backToHome,setCourses}){
 
     //Retrieving particular course from courseData
-    const [courseData,setCourseData] = useState(null)
-
-    useEffect(() => {
-  const course = courses.find(c => c.id === course_id);
-  setCourseData(course);
-}, [course_id]);
+    const [courseData,setCourseData] = useState(courses.find(c => c.id === course_id))
 
     
     // Used to Show/hide download Options
