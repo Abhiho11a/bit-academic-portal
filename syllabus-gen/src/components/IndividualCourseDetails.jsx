@@ -1,5 +1,6 @@
-import { ArrowLeft, ChevronDown, ChevronUp, Download, Edit, Plus } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp, Download, Edit, Minus, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import ModuleEditForm from "./ModuleEditForm";
 
 export default function IndividualCourseDetails({courses,course_id,backToHome,setCourses}){
 
@@ -684,6 +685,7 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
         </>}
         
         {editForm==="open" && <InputForm formData={courseData} setFormData={setCourseData} editSub={editSubjectDetails} closeForm={()=>setEditForm("close")}/>}
+        {moduleEditForm[0] && <ModuleEditForm module={moduleEditForm[1]} onSave={(updated)=>handleEditModule(updated)} onCancel={()=>showModuleEditForm([false,null,null])}/>}
 
         </div>
     </>
