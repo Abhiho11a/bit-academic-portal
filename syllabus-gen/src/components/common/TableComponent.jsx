@@ -1,11 +1,17 @@
 import { Eye, Trash2 } from "lucide-react";
+import supabase from "../../services/supabaseClient";
 
 export function TableComponent({courses,setCourses,setDetailedView}){
 
-    function deleteCourse(id){
-        const filteredCourses = courses.filter(course => course.id !== id)
-        setCourses(filteredCourses)
-    }
+    async function deleteCourse(course_id){
+    //   setShowPopup({msg:"Course deleted",type:"error"})
+      //Delete COURSE from DATABASE
+      const {error} = await supabase.from("courses").delete().eq("id",course_id);
+
+      if(!error)
+        setCourses(prev=>prev.filter(it=>it.id!==course_id))
+        
+  }
     return (
     <div className="bg-white rounded-lg overflow-hidden mt-1">
         <div className="overflow-x-auto">

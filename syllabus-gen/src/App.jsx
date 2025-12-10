@@ -1,21 +1,42 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css'
 import { Courses, DataSchema } from './data/data';
-import { Download, Link } from 'lucide-react'
+import { Download, Link, Pointer } from 'lucide-react'
 import Header from './components/common/Header';
 import { TableComponent } from './components/common/TableComponent';
 import IndividualCourseDetails from './pages/IndividualCourseDetails';
 import { InputForm } from './components/forms/InputForm';
+import supabase from './services/supabaseClient'
 
 export default function App(){
 
   const [formData,setFormData] = useState(DataSchema)
   const [courses,setCourses] = useState(Courses)
   const [department,setDepartment] = useState("CSE")
-  const [loadingMsg,setLoadingMsg] = useState(null)
   const [detailedView_id,setDetailedView_id] = useState(null)
   const [openForm,setOpenForm] = useState(false)
   const departments = ["AIML","CSE","CSE(IOT)", "CS(DS)", "ISE", "ECE", "EEE", "EIE", "ETE", "VLSI", "ME", "CIVIL","RAI"];
+
+  
+  async function fetchDataFromDb(delay1,delay2){
+    // setLoadingMsg("Fetching data from the Database...")
+    // setTimeout(()=>{
+    //   setLoadingMsg("Data Fetched Successfully")
+    // },delay1)
+    const {data:dbData,error} = await supabase.from("courses").select("*").eq("department",department)
+    
+    // setTimeout(()=>{
+    //   setLoadingMsg(null)
+    // },delay2)
+    setCourses(dbData||[])
+  }
+
+  useEffect(()=>{
+    fetchDataFromDb(200,300)
+  },[detailedView_id,department])
+
+
+
 
   //Function To Get Department name using "department"
   function getDeptName(dept){
@@ -268,15 +289,18 @@ export default function App(){
             </div>
 
             {/* Buttons – clean stacked layout for mobile */}
-            <div className="mt-5 grid grid-cols-2 gap-3 max-w-md mx-auto">
+            <div className="mt-5 grid grid-cols-2 gap-3 max-w-md mx-auto justify-center">
 
               {/* Download */}
               <button
+                disabled = {courses.length === 0?true:false}
                 onClick={()=>{confirm("Are you sure want to download all courses as sigle pdf?")?"downloadAllPdfs":''}}
-                className="flex items-center justify-center gap-2
+                className={`flex items-center justify-center gap-2
                           px-3 py-2 rounded-lg
                           bg-slate-800 text-white text-sm font-medium
-                          shadow-sm hover:bg-slate-900 transition flex-1"
+                          shadow-sm hover:bg-slate-900 transition flex-1
+                          ${courses.length === 0?"cursor-no-drop":"cursor-pointer hover:scale-101 transition-all duration-300"}
+                          `}
               >
                 <Download/>
                 Download
@@ -288,7 +312,7 @@ export default function App(){
                           px-3 py-2 rounded-lg
                           border border-blue-500
                           text-blue-600 text-sm font-medium
-                          bg-white hover:bg-blue-50 transition flex-1"
+                          bg-white hover:bg-blue-50 flex-1 hover:cursor-pointer hover:scale-102 transition-all duration-300"
               >
                 <Link/>
                 Merge
@@ -297,13 +321,17 @@ export default function App(){
           </div>
 
           {/* 3️⃣ Course Table */}
-          <div className="w-full max-w-6xl mx-auto px-3 mt-6">
+          {courses.length === 0
+          ?<h2 className='text-center'>No Data Found</h2>
+          :<div className="w-full max-w-6xl mx-auto px-3 mt-6">
               <TableComponent
               courses={courses}
               setCourses={setCourses}
               setDetailedView={setDetailedView_id}
           />
           </div>
+          }
+          
         </div>
       )}
 
