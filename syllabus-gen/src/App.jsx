@@ -381,7 +381,7 @@ export default function App(){
           {loadingMsg ? <Loading msg={loadingMsg}/>:
             <>
               {courses.length === 0
-              ?<h2 className='text-center'>No Data Found</h2>
+              ?<h2 className='text-center mt-10'>No Data Found</h2>
               :<div className="w-full max-w-6xl mx-auto px-3 mt-6">
                   <TableComponent
                   courses={courses}

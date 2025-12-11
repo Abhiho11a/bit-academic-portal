@@ -2,6 +2,7 @@ import { ArrowLeft, ChevronDown, ChevronUp, Download, Edit, Edit2, Minus, Plus }
 import { useEffect, useState } from "react";
 import ModuleEditForm from "../components/forms/ModuleEditForm";
 import { InputForm } from "../components/forms/InputForm";
+import supabase from "../services/supabaseClient";
 
 export default function IndividualCourseDetails({courses,course_id,backToHome,setCourses}){
 
@@ -68,43 +69,43 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
             case ("PCC"):
             {
                 updatedCType += " (T)"
-                break
+                break;
             }
             case ("PCCL"):
             {
                 updatedCType += " (L)"
-                break
+                break;
             }
             case ("ESC"):
             {
                 const type = askCourseType("Is this IPCC course Theory or Theory+Lab? (Enter: t/tl)")
                 type.toLowerCase() == "t"?updatedCType+=" (T)":updatedCType+=" (T+L)"
-                break
+                break;
             }
             case ("AEC"):
             {
                 const type = askCourseType("Is this IPCC course Theory or Lab? (Enter: t/l)")
                 type.toLowerCase() == "t"?updatedCType+=" (T)":updatedCType+=" (L)"
-                break
+                break;
             }
         }
 
         // Update Course Type
         const updatedData = { 
             ...courseData,
-            course_type: updatedCType 
+            course_type: updatedCType
         };
 
-        // // Update in Supabase
-        // const { error } = await supabase
-        //     .from("courses")
-        //     .update(updatedData)
-        //     .eq("id", courseData.id);
+        // Update in Supabase
+        const { error } = await supabase
+            .from("courses")
+            .update(updatedData)
+            .eq("id", courseData.id);
 
-        // if (error) {
-        //     alert("Error updating course: " + error.message);
-        //     return;
-        // }
+        if (error) {
+            alert("Error updating course: " + error.message);
+            return;
+        }
         
 
         // Update individual page instantly
