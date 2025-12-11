@@ -8,6 +8,7 @@ import IndividualCourseDetails from './pages/IndividualCourseDetails';
 import { InputForm } from './components/forms/InputForm';
 import supabase from './services/supabaseClient'
 import Sidebar from './components/common/Sidebar';
+import Loading from './components/common/Loading'
 
 export default function App(){
 
@@ -18,6 +19,7 @@ export default function App(){
   const [detailedView_id,setDetailedView_id] = useState(null)
   const [openForm,setOpenForm] = useState(false)
   const departments = ["AIML","CSE","CSE(IOT)", "CS(DS)", "ISE", "ECE", "EEE", "EIE", "ETE", "VLSI", "ME", "CIVIL","RAI"];
+  const [loadingMsg,setLoadingMsg] = useState("")
 
   const [sidebarOpen,setSidebarOpen] = useState(false)
   const [expandedProgram, setExpandedProgram] = useState("BE/BTECH")
@@ -48,11 +50,11 @@ export default function App(){
     setDepartment(programStructure[prog].departments[0])
   }
   
-  async function fetchDataFromDb(delay1,delay2){
-    // setLoadingMsg("Fetching data from the Database...")
-    // setTimeout(()=>{
-    //   setLoadingMsg("Data Fetched Successfully")
-    // },delay1)
+  async function fetchDataFromDb(){
+    setLoadingMsg("Fetching Data From Database...")
+    setTimeout(()=>{
+      setLoadingMsg("")
+    },1000)
     const {data:dbData,error} = await supabase.from("courses").select("*").eq("department",department)
     
     // setTimeout(()=>{
@@ -62,9 +64,8 @@ export default function App(){
   }
 
   useEffect(()=>{
-    fetchDataFromDb(200,300)
+    fetchDataFromDb()
   },[detailedView_id,department])
-
 
 
 
@@ -267,10 +268,10 @@ export default function App(){
 }
 
   return (
-    <div>
+    <div >
       <Header/>
-      
-      <Sidebar 
+
+      <Sidebar
       sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}
       programStructure={programStructure}
       expandedProgram={expandedProgram}
@@ -377,17 +378,20 @@ export default function App(){
           </div>
 
           {/* 3️⃣ Course Table */}
-          {courses.length === 0
-          ?<h2 className='text-center'>No Data Found</h2>
-          :<div className="w-full max-w-6xl mx-auto px-3 mt-6">
-              <TableComponent
-              courses={courses}
-              setCourses={setCourses}
-              setDetailedView={setDetailedView_id}
-          />
-          </div>
-          }
-          
+          {loadingMsg ? <Loading msg={loadingMsg}/>:
+            <>
+              {courses.length === 0
+              ?<h2 className='text-center'>No Data Found</h2>
+              :<div className="w-full max-w-6xl mx-auto px-3 mt-6">
+                  <TableComponent
+                  courses={courses}
+                  setCourses={setCourses}
+                  setDetailedView={setDetailedView_id}
+              />
+              </div>
+              }
+            </> 
+          } 
         </div>
       )}
 
