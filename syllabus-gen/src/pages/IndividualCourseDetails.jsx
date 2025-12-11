@@ -159,17 +159,18 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
         updatedModules[index] = updatedModule;
         const updatedCourse = { ...courseData, modules: updatedModules };
 
-        // // Update in Supabase
-        // const { error } = await supabase
-        //     .from("courses")
-        //     .update({ modules: updatedModules })
-        //     .eq("id", courseData.id);
 
-        // if (error) {
-        //     console.error("Supabase update error:", error);
-        //     alert("Failed to update module in database.");
-        //     return;
-        // }
+        {/* Update in DATABASE */}
+        const { error } = await supabase
+            .from("courses")
+            .update({ modules: updatedModules })
+            .eq("id", courseData.id);
+
+        if (error) {
+            console.error("Supabase update error:", error);
+            alert("Failed to update module in database.");
+            return;
+        }
 
 
         // Update local state

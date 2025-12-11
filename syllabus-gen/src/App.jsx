@@ -9,11 +9,12 @@ import { InputForm } from './components/forms/InputForm';
 import supabase from './services/supabaseClient'
 import Sidebar from './components/common/Sidebar';
 import Loading from './components/common/Loading'
+import { resetFormData } from './services/resetFormData';
 
 export default function App(){
 
   const [formData,setFormData] = useState(DataSchema)
-  const [courses,setCourses] = useState(Courses)
+  const [courses,setCourses] = useState([])
   const [program, setProgram] = useState("BE/BTECH")
   const [department,setDepartment] = useState("CSE")
   const [detailedView_id,setDetailedView_id] = useState(null)
@@ -138,6 +139,7 @@ export default function App(){
 
     if (duplicate) {
       alert(`Course "${formData.course_title}" with code "${formData.course_code}" already exists.`);
+      resetFormData(setFormData)
       return;
     }
     if(dupError){
@@ -220,52 +222,16 @@ export default function App(){
     // setShowPopup({msg:"Added new Course..",type:"success"})
 
 
+    {/* Fetch After adding course */}
     fetchDataFromDb();
 
-    setFormData({sem:0,
-      course_title:"",
-      course_code:"",
-      course_type:"",
-      credits:0,
-      cie:0,
-      see:0,
-      ltps:"",
-      exam_hours:0,
-      course_objectives:"",
-      course_outcomes:"",
-      teaching_learning:"",
-      referral_links:"",
-      textbooks:[],
-      modules:[
-    {
-      "no": 1
-    },
-    {
-      "no": 2
-    },
-    {
-      "no": 3
-    },
-    {
-      "no": 4
-    },
-    {
-      "no": 5
-    }
-  ],
-      activity_based:"",
-      copoMapping: {
-    headers: ["PO1","PO2","PO3","PO4","PO5","PO6","PO7","PO8","PO9","PO10","PO11"],
-    rows: [
-      { co: "CO1", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
-      { co: "CO2", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
-      { co: "CO3", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
-      { co: "CO4", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
-      { co: "CO5", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
-    ]
-  } 
-});
+    {/* Reset FormData */}
+    resetFormData(setFormData)
 }
+
+function editSubjectDetails(){
+
+  }
 
   return (
     <div >
@@ -297,7 +263,7 @@ export default function App(){
       {/* Floating Menu Button */}
       {!detailedView_id && !openForm && (
         <button
-          className="fixed bottom-6 right-6 rounded-full p-3
+          className="fixed bottom-6 right-6 rounded-full py-2 px-4
                         bg-slate-700 text-white shadow-lg z-50
                         hover:bg-slate-800 transition-all hover:scale-102"
           onClick={() => setOpenForm(true)}>
