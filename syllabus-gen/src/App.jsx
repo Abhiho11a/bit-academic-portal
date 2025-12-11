@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './App.css'
-import { Courses, DataSchema } from './data/data';
+import { Courses } from './data/data';
+import { DataSchema } from './config/appConfig';
 import { Download, Link, Menu, Pointer } from 'lucide-react'
 import Header from './components/common/Header';
 import { TableComponent } from './components/common/TableComponent';
@@ -9,7 +10,8 @@ import { InputForm } from './components/forms/InputForm';
 import supabase from './services/supabaseClient'
 import Sidebar from './components/common/Sidebar';
 import Loading from './components/common/Loading'
-import { resetFormData } from './services/resetFormData';
+import { resetFormData } from './config/resetFormData';
+import { programStructure } from './config/appConfig';
 
 export default function App(){
 
@@ -19,31 +21,13 @@ export default function App(){
   const [department,setDepartment] = useState("CSE")
   const [detailedView_id,setDetailedView_id] = useState(null)
   const [openForm,setOpenForm] = useState(false)
-  const departments = ["AIML","CSE","CSE(IOT)", "CS(DS)", "ISE", "ECE", "EEE", "EIE", "ETE", "VLSI", "ME", "CIVIL","RAI"];
   const [loadingMsg,setLoadingMsg] = useState("")
 
   const [sidebarOpen,setSidebarOpen] = useState(false)
-  const [expandedProgram, setExpandedProgram] = useState("BE/BTECH")
+  const [expandedProgram, setExpandedProgram] = useState("BE")
 
   // Program structure with departments
-  const programStructure = {
-    "BE/BTECH": {
-      icon: "🎓",
-      departments: ["AIML", "CSE", "CSE(IOT)", "CS(DS)", "ISE", "ECE", "EEE", "EIE", "ETE", "VLSI", "ME", "CIVIL", "RAI","FFIJ"]
-    },
-    "MCA": {
-      icon: "💻",
-      departments: ["MCA"]
-    },
-    "MBA": {
-      icon: "📊",
-      departments: ["MBA"]
-    },
-    "MTECH": {
-      icon: "🔬",
-      departments: ["CSE", "VLSI", "STRUCTURAL"]
-    }
-  }
+  
   {/* Function To TOGGLE Prog in Main Section */}
   function handleProgramClick(prog) {
     setProgram(prog)
@@ -52,7 +36,7 @@ export default function App(){
   }
   
   async function fetchDataFromDb(){
-    setLoadingMsg("Fetching Data From Database...")
+    setLoadingMsg("Fetching Data ...")
     setTimeout(()=>{
       setLoadingMsg("")
     },1000)
@@ -276,7 +260,7 @@ function editSubjectDetails(){
         <div className="w-full flex flex-col">
 
           {/* Department selector */}
-          <div className="w-full flex justify-center mt-2">
+          {/* <div className="w-full flex justify-center mt-2">
             <div
               className="flex gap-3 overflow-x-auto px-3 py-2
                         scrollbar-hide max-w-full"
@@ -298,7 +282,7 @@ function editSubjectDetails(){
                 </button>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Department title + actions */}
           <div className="w-full max-w-6xl mx-auto px-4 mt-1">

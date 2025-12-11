@@ -1,4 +1,4 @@
-import { ArrowLeft, ChevronDown, ChevronUp, Download, Edit, Edit2, Minus, Plus } from "lucide-react";
+import { ArrowLeft, Check, ChevronDown, ChevronUp, Download, Edit, Edit2, Minus, Plus, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import ModuleEditForm from "../components/forms/ModuleEditForm";
 import { InputForm } from "../components/forms/InputForm";
@@ -7,7 +7,11 @@ import supabase from "../services/supabaseClient";
 export default function IndividualCourseDetails({courses,course_id,backToHome,setCourses}){
 
     //Retrieving particular course from courseData
-    const [courseData,setCourseData] = useState(courses.find(c => c.id === course_id))
+    const [courseData,setCourseData] = useState([])
+
+    useEffect(()=>{
+        fetchDataFromDb()
+    })
 
     
     // Used to Show/hide download Options
@@ -142,7 +146,6 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
 
     const [newExpNo,setNewExpNo] = useState("");
     const [newExpCont,setNewExpCont] = useState("");
-    const [showExpInput,setShowExpInput] = useState(false)
     const [editingExpIndex, setEditingExpIndex] = useState(null);
     const [editExpNo, setEditExpNo] = useState('');
     const [editExpCont, setEditExpCont] = useState('');
@@ -172,7 +175,6 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
             return;
         }
 
-
         // Update local state
         setCourseData(updatedCourse);
         setCourses((prev) =>
@@ -184,6 +186,20 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
         //Close form after EDITING Module Detail
         showModuleEditForm([false, null, null]);
 }
+    {/* Function To fetch Data From DB */}
+    async function fetchDataFromDb(){
+        const {data,error} = await supabase.from("courses").select("*").eq("id",course_id).single()
+        if(error)
+            alert("Error while loading")
+        else
+            setCourseData(data)
+
+        //update data in main course USESTATE TOO
+        setCourses(data)
+        //Check for array if the prev one is not of array then create array of current data
+        setCourses(prev => Array.isArray(prev) ? prev.map(item => item.id === data.id ? data : item) : [data]);
+  }
+
 
     {/* Experiments Section Handler Functions */}
     //Adding new Experiment
@@ -196,17 +212,17 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
         const experiments = courseData.experiments || []
         const updatedExps = [...experiments,{slno:parseInt(newExpNo),cont:newExpCont}]
 
-        // const {error} = await supabase.from("courses").update({"experiments":updatedExps}).eq("id",course_id)
+        const {error} = await supabase.from("courses").update({"experiments":updatedExps}).eq("id",course_id)
 
-        // if(error)
-        //   alert("Failed to add New Experiment")
-        // else
-        //   alert("Successfuly added")
+        if(error)
+          alert("Failed to add New Experiment")
+        else
+          alert("Successfuly added")
 
         
         setNewExpCont("")
         setNewExpNo("")
-        // fetchCourseFromDb()
+        fetchDataFromDb()
 }
     //Delete Experiment
     async function handleDeleteExperiment (index){
@@ -215,15 +231,15 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
 
         const updatedExps = courseData.experiments.filter((_, i) => i !== index);
 
-        // const { error } = await supabase
-        //   .from("courses")
-        //   .update({ experiments: updatedExps })
-        //   .eq("id", course_id);
+        const { error } = await supabase
+          .from("courses")
+          .update({ experiments: updatedExps })
+          .eq("id", course_id);
 
-        // if (error) {
-        //   alert("Failed to delete experiment: " + error.message);
-        //   return;
-        // }
+        if (error) {
+          alert("Failed to delete experiment: " + error.message);
+          return;
+        }
 
         setCourseData({ ...courseData, experiments: updatedExps });
         setCourses(prev =>
@@ -257,15 +273,15 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
         // Sort by slno
         updatedExps.sort((a, b) => a.slno - b.slno);
 
-        // const { error } = await supabase
-        //   .from("courses")
-        //   .update({ experiments: updatedExps })
-        //   .eq("id", course_id);
+        const { error } = await supabase
+          .from("courses")
+          .update({ experiments: updatedExps })
+          .eq("id", course_id);
 
-        // if (error) {
-        //   alert("Failed to update experiment: " + error.message);
-        //   return;
-        // }
+        if (error) {
+          alert("Failed to update experiment: " + error.message);
+          return;
+        }
 
         setCourseData({ ...courseData, experiments: updatedExps });
         setCourses(prev =>
@@ -305,10 +321,10 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
                 <div className='flex gap-2'> 
                     <div className="relative">
                         <button
-                            onClick={() => setDownLoadMenu(!open)}
-                            className="flex gap-1 px-4 py-2 rounded-full bg-slate-800 text-white"
+                            onClick={() => setDownLoadMenu(prev => !prev)}
+                            className="flex gap-1 px-4 py-2 rounded-full bg-slate-800 text-white items-center"
                         >
-                            <Download/>
+                            <Download size={18}/>
                             Download
                         </button>
 
@@ -326,9 +342,9 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
                     <button
                     onClick={() => setEditForm("open")} 
                     className="flex px-4 gap-2 items-center py-1.5 rounded-md bg-slate-700 text-white  cursor-pointer
-                                hover:bg-slate-800 transition font-medium shadow-sm text-xs md:text-[15px]"
+                                hover:bg-slate-800 transition font-medium shadow-sm text-xs md:text-[15px] "
                     >
-                        <Edit size={20}/><p className="text-xs md:text-[15px] hidden md:block">Edit</p>
+                        <Edit size={18}/><p className="text-xs md:text-[15px] hidden md:block">Edit</p>
                     </button>
                 </div>
             </div>

@@ -431,39 +431,3 @@ export const Courses = [
 
 
 
-
-export const DataSchema = {
-    sem:"",
-    course_title:"",
-    course_code:"",
-    course_type:"",
-    credits:"",
-    pedagogy:"",
-    cie:"",
-    see:"",
-    ltps:"",
-    exam_hours:"",
-    course_objectives:"",
-    course_outcomes:"",
-    teaching_learning:"",
-    referral_links:"",
-    textbooks:[],
-    modules:[
-  {
-    "no": 1
-  },
-  {
-    "no": 2
-  },
-  {
-    "no": 3
-  },
-  {
-    "no": 4
-  },
-  {
-    "no": 5
-  }
-],
-    activity_based:"",
-}
