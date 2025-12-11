@@ -1,4 +1,5 @@
 import { ChevronDown, ChevronRight, X } from "lucide-react"
+import '../../App.css'
 
 export default function Sidebar({sidebarOpen,setSidebarOpen,programStructure,expandedProgram,program,department,setDepartment,setExpandedProgram,handleProgramClick}){
     return (
@@ -30,7 +31,7 @@ export default function Sidebar({sidebarOpen,setSidebarOpen,programStructure,exp
         </div>
 
         {/* Program List */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        <div className="flex-1 overflow-y-auto hide-scrollbar p-4 space-y-2">
           {Object.keys(programStructure).map((prog) => {
             const { icon, departments } = programStructure[prog]
             const isExpanded = expandedProgram === prog
