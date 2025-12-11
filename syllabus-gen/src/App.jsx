@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import './App.css'
 import { Courses } from './data/data';
 import { DataSchema } from './config/appConfig';
-import { Download, Link, Menu, Pointer } from 'lucide-react'
+import { Download, Link, Menu, Plus, Pointer } from 'lucide-react'
 import Header from './components/common/Header';
 import { TableComponent } from './components/common/TableComponent';
 import IndividualCourseDetails from './pages/IndividualCourseDetails';
@@ -247,11 +247,12 @@ function editSubjectDetails(){
       {/* Floating Menu Button */}
       {!detailedView_id && !openForm && (
         <button
-          className="fixed bottom-6 right-6 rounded-full py-2 px-4
+          className="fixed bottom-6 right-6 rounded-full py-2 px-4 flex items-center gap-1
                         bg-slate-700 text-white shadow-lg z-50
                         hover:bg-slate-800 transition-all hover:scale-102"
           onClick={() => setOpenForm(true)}>
-            + Add Course
+            <Plus size={18}/>
+            Add Course
         </button>
       )}
 
@@ -306,10 +307,10 @@ function editSubjectDetails(){
                           px-3 py-2 rounded-lg
                           bg-slate-800 text-white text-sm font-medium
                           shadow-sm hover:bg-slate-900 transition flex-1
-                          ${courses.length === 0?"cursor-no-drop":"cursor-pointer hover:scale-101 transition-all duration-300"}
+                          ${courses.length === 0?"cursor-no-drop":"cursor-pointer hover:-translate-y-0.5 transition-all duration-300"}
                           `}
               >
-                <Download/>
+                <Download size={18}/>
                 Download
               </button>
 
@@ -319,9 +320,9 @@ function editSubjectDetails(){
                           px-3 py-2 rounded-lg
                           border border-blue-500
                           text-blue-600 text-sm font-medium
-                          bg-white hover:bg-blue-50 flex-1 hover:cursor-pointer hover:scale-102 transition-all duration-300"
+                          bg-white hover:bg-blue-50 flex-1 hover:cursor-pointer hover:-translate-y-0.5 transition-all duration-300"
               >
-                <Link/>
+                <Link size={18}/>
                 Merge
               </button>
             </div>

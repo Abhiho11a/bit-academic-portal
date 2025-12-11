@@ -4,13 +4,18 @@ import supabase from "../../services/supabaseClient";
 export function TableComponent({courses,setCourses,setDetailedView}){
 
     async function deleteCourse(course_id){
-    //   setShowPopup({msg:"Course deleted",type:"error"})
-      //Delete COURSE from DATABASE
-      const {error} = await supabase.from("courses").delete().eq("id",course_id);
-
-      if(!error)
-        setCourses(prev=>prev.filter(it=>it.id!==course_id))
         
+        //Find course with id===course_id
+        const del_course = courses.find(it => it.id === course_id)
+
+        //Confirm DELETION and Delete COURSE from DATABASE
+        if(confirm(`Are you Sure want to delete Details of course with CODE :- ${del_course.course_code}`))
+        {
+            const {error} = await supabase.from("courses").delete().eq("id",course_id);
+        
+            if(!error)
+                setCourses(prev=>prev.filter(it=>it.id!==course_id))
+        }
   }
     return (
     <div className="bg-white rounded-lg overflow-hidden mt-1">
@@ -55,7 +60,7 @@ export function TableComponent({courses,setCourses,setDetailedView}){
                         <div className="md:min-w-[250px] text-sm lg:text-lg">{course.course_title}</div>
                         </td>
         
-                        <td className="py-4 px-4 text-gray-900 font-medium">
+                        <td className="py-4 px-4 text-gray-900 font-medium text-center">
                         {course.course_code}
                         </td>
         
