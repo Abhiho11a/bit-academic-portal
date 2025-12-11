@@ -1,22 +1,52 @@
 import { useEffect, useState } from 'react';
 import './App.css'
 import { Courses, DataSchema } from './data/data';
-import { Download, Link, Pointer } from 'lucide-react'
+import { Download, Link, Menu, Pointer } from 'lucide-react'
 import Header from './components/common/Header';
 import { TableComponent } from './components/common/TableComponent';
 import IndividualCourseDetails from './pages/IndividualCourseDetails';
 import { InputForm } from './components/forms/InputForm';
 import supabase from './services/supabaseClient'
+import Sidebar from './components/common/Sidebar';
 
 export default function App(){
 
   const [formData,setFormData] = useState(DataSchema)
   const [courses,setCourses] = useState(Courses)
+  const [program, setProgram] = useState("BE/BTECH")
   const [department,setDepartment] = useState("CSE")
   const [detailedView_id,setDetailedView_id] = useState(null)
   const [openForm,setOpenForm] = useState(false)
   const departments = ["AIML","CSE","CSE(IOT)", "CS(DS)", "ISE", "ECE", "EEE", "EIE", "ETE", "VLSI", "ME", "CIVIL","RAI"];
 
+  const [sidebarOpen,setSidebarOpen] = useState(false)
+  const [expandedProgram, setExpandedProgram] = useState("BE/BTECH")
+
+  // Program structure with departments
+  const programStructure = {
+    "BE/BTECH": {
+      icon: "🎓",
+      departments: ["AIML", "CSE", "CSE(IOT)", "CS(DS)", "ISE", "ECE", "EEE", "EIE", "ETE", "VLSI", "ME", "CIVIL", "RAI","FFIJ"]
+    },
+    "MCA": {
+      icon: "💻",
+      departments: ["MCA"]
+    },
+    "MBA": {
+      icon: "📊",
+      departments: ["MBA"]
+    },
+    "MTECH": {
+      icon: "🔬",
+      departments: ["CSE", "VLSI", "STRUCTURAL"]
+    }
+  }
+  {/* Function To TOGGLE Prog in Main Section */}
+  function handleProgramClick(prog) {
+    setProgram(prog)
+    setExpandedProgram(prog)
+    setDepartment(programStructure[prog].departments[0])
+  }
   
   async function fetchDataFromDb(delay1,delay2){
     // setLoadingMsg("Fetching data from the Database...")
@@ -97,18 +127,23 @@ export default function App(){
   {/* Function To ADD new Course Details */}
   async function addSubjectDetails() {
 
-    // 1️⃣ CHECK IF EXACT PAIR EXISTS
-    // const { data: duplicate, error:dupError } = await supabase
-    //   .from("courses")
-    //   .select("*")
-    //   .eq("course_title", formData.course_title)
-    //   .eq("course_code", formData.course_code)
-    //   .maybeSingle();
+    // CHECK IF EXACT PAIR EXISTS
+    const { data: duplicate, error:dupError } = await supabase
+    .from("courses")
+    .select("*")
+    .eq("course_title", formData.course_title)
+    .eq("course_code", formData.course_code)
+    .maybeSingle();
 
-    // if (duplicate) {
-    //   alert(`Course "${formData.course_title}" with code "${formData.course_code}" already exists.`);
-    //   return;
-    // }
+    if (duplicate) {
+      alert(`Course "${formData.course_title}" with code "${formData.course_code}" already exists.`);
+      return;
+    }
+    if(dupError){
+      alert('error:',dupError);
+      return;
+    }
+
 
     //
     let updatedCType = formData.course_type;
@@ -152,39 +187,39 @@ export default function App(){
       }
     }
 
-    // 2️⃣ INSERT NEW ROW
-    // const { error: insertError } = await supabase.from("courses").insert({
-    //   department: department,
-    //   sem: formData.sem,
-    //   course_title: formData.course_title,
-    //   course_code: formData.course_code,
-    //   course_type: updatedCType,
-    //   credits: formData.credits,
-    //   pedagogy: formData.pedagogy,
-    //   cie: formData.cie,
-    //   see: formData.see,
-    //   ltps: formData.ltps,
-    //   exam_hours: formData.exam_hours,
-    //   course_objectives: formData.course_objectives,
-    //   course_outcomes: formData.course_outcomes,
-    //   teaching_learning: formData.teaching_learning,
-    //   referral_links: formData.referral_links,
-    //   textbooks: formData.textbooks,
-    //   modules: formData.modules,
-    //   activity_based: formData.activity_based,
-    //   copoMapping:formData.copoMapping
-    // });
+    // INSERT NEW ROW
+    const { error: insertError } = await supabase.from("courses").insert({
+      department: department,
+      sem: formData.sem,
+      course_title: formData.course_title,
+      course_code: formData.course_code,
+      course_type: updatedCType,
+      credits: formData.credits,
+      pedagogy: formData.pedagogy,
+      cie: formData.cie,
+      see: formData.see,
+      ltps: formData.ltps,
+      exam_hours: formData.exam_hours,
+      course_objectives: formData.course_objectives,
+      course_outcomes: formData.course_outcomes,
+      teaching_learning: formData.teaching_learning,
+      referral_links: formData.referral_links,
+      textbooks: formData.textbooks,
+      modules: formData.modules,
+      activity_based: formData.activity_based,
+      copoMapping:formData.copoMapping
+    });
 
-    // if (insertError) {
-    //   alert("Insert failed: " + insertError.message);
-    //   console.log(insertError)
-    //   return;
-    // }
+    if (insertError) {
+      alert("Insert failed: " + insertError.message);
+      console.log(insertError)
+      return;
+    }
 
     // setShowPopup({msg:"Added new Course..",type:"success"})
 
 
-    // fetchDataFromDb();
+    fetchDataFromDb();
 
     setFormData({sem:0,
       course_title:"",
@@ -234,14 +269,36 @@ export default function App(){
   return (
     <div>
       <Header/>
+      
+      <Sidebar 
+      sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}
+      programStructure={programStructure}
+      expandedProgram={expandedProgram}
+      program={program}
+      department={department}
+      setDepartment={setDepartment}
+      setExpandedProgram={setExpandedProgram}
+      handleProgramClick = {handleProgramClick}
+      />
 
       {/* Floating Add Button */}
+      {!sidebarOpen && (
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="fixed bottom-6 left-6 w-12 h-12 rounded-full
+                        bg-slate-800 text-white shadow-lg z-50
+                        hover:bg-slate-900 transition-all hover:scale-102
+                        flex items-center justify-center"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+          )}
+      {/* Floating Menu Button */}
       {!detailedView_id && !openForm && (
         <button
-          className="fixed bottom-6 right-6 rounded-full px-4 py-3
-                    bg-slate-800 text-white shadow-lg
-                    text-sm font-medium flex items-center gap-2
-                    hover:bg-slate-900 transition"
+          className="fixed bottom-6 right-6 rounded-full p-3
+                        bg-slate-700 text-white shadow-lg z-50
+                        hover:bg-slate-800 transition-all hover:scale-102"
           onClick={() => setOpenForm(true)}>
             + Add Course
         </button>
@@ -278,7 +335,6 @@ export default function App(){
 
           {/* Department title + actions */}
           <div className="w-full max-w-6xl mx-auto px-4 mt-1">
-
             {/* Title */}
             <div className="text-center">
               <p className="text-sm text-slate-500">Department of</p>
