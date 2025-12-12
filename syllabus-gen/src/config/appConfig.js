@@ -37,12 +37,13 @@ export const DataSchema = {
     modules:[{"no": 1},{"no": 2},{"no": 3},{"no": 4},{"no": 5}],
     activity_based:"",
     copoMapping: {
-        headers: ["PO1","PO2","PO3","PO4","PO5","PO6","PO7","PO8","PO9","PO10","PO11"],
-        rows: [
-            { co: "CO1", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
-            { co: "CO2", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
-            { co: "CO3", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
-            { co: "CO4", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
-            { co: "CO5", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
-        ]}
+      headers: ["PO1","PO2","PO3","PO4","PO5","PO6","PO7","PO8","PO9","PO10","PO11"],
+      rows: [
+        { co: "CO1", vals: Array(11).fill(""), pso: ["", ""] },
+        { co: "CO2", vals: Array(11).fill(""), pso: ["", ""] },
+        { co: "CO3", vals: Array(11).fill(""), pso: ["", ""] },
+        { co: "CO4", vals: Array(11).fill(""), pso: ["", ""] },
+        { co: "CO5", vals: Array(11).fill(""), pso: ["", ""] },
+      ]
+    }
 }

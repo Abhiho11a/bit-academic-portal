@@ -2,20 +2,20 @@ import { X } from "lucide-react";
 
 export function InputForm({formData,setFormData,addSub,editSub,closeForm}){
 
-
     {/* IF FormData doesnot contains COPO-Mapping Object then add to formData */}
     if (!formData.copoMapping) {
         setFormData({...formData,
             copoMapping: {
-            headers: ["PO1","PO2","PO3","PO4","PO5","PO6","PO7","PO8","PO9","PO10","PO11"],
-            rows: [
-                { co: "CO1", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
-                { co: "CO2", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
-                { co: "CO3", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
-                { co: "CO4", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
-                { co: "CO5", vals: ["", "", "", "", "", "", "", "", "", "", ""], pso1: "", pso2: "" },
-            ]}
-        });
+                headers: ["PO1","PO2","PO3","PO4","PO5","PO6","PO7","PO8","PO9","PO10","PO11"],
+                rows: [
+                    { co: "CO1", vals: Array(11).fill(""), pso: ["", ""] },
+                    { co: "CO2", vals: Array(11).fill(""), pso: ["", ""] },
+                    { co: "CO3", vals: Array(11).fill(""), pso: ["", ""] },
+                    { co: "CO4", vals: Array(11).fill(""), pso: ["", ""] },
+                    { co: "CO5", vals: Array(11).fill(""), pso: ["", ""] },
+                ]
+                }
+            });
     }
 
     {/* Dynamic AUTHOR Details and TEXTBOOK Details Adding */}
@@ -37,6 +37,45 @@ export function InputForm({formData,setFormData,addSub,editSub,closeForm}){
         updated.splice(index, 1);
         setFormData({ ...formData, textbooks: updated });
     };
+
+    {/* DYNAMIC PSO Cols in COPO Mapping Table */}
+    function addPsoCol () {
+
+        const updatedRows = formData.copoMapping.rows.map(row => ({
+            ...row,
+            pso: [...row.pso, ""]  // add one empty PSO column
+        }));
+
+        setFormData({
+            ...formData,
+            copoMapping: {
+            ...formData.copoMapping,
+            rows: updatedRows,
+            }
+        });
+    };
+
+    function removePsoCol () {
+        const currentLength = formData.copoMapping.rows[0].pso.length;
+
+        if (currentLength <= 2) {
+            alert("At least two PSO columns are required.");
+            return;
+        }
+        //Removing from last Using SLICE ARRAY SLICE Method
+        const updatedRows = formData.copoMapping.rows.map(row => ({
+            ...row,
+            pso: row.pso.slice(0, -1)
+        }));
+
+        setFormData({
+            ...formData,
+            copoMapping: {
+            ...formData.copoMapping,
+            rows: updatedRows
+            }
+        });
+};
 
 
     {/* Check For Valid Data in FORM and then DECIDE ACCORDINGLY */}
@@ -370,6 +409,16 @@ export function InputForm({formData,setFormData,addSub,editSub,closeForm}){
                     CO - PO - PSO Mapping Table
                 </h3>
 
+                {/* Add and remove btn for PSO Cols (DYNAMIC) */}
+                <div className="flex gap-5 my-4">
+                    <div className="group"> 
+                    <button onClick={()=>addPsoCol()} className="border rounded-md cursor-pointer border-white px-4 py-2 text-white bg-slate-500 "><h2 className="hidden group-hover:block absolute backdrop-blur-3xl text-black -mt-10 -ml-10 px-2 py-1">Add PSO Column</h2> Add </button>
+                    </div>
+                    <div className="group">
+                    <button onClick={()=>removePsoCol()} className="border rounded-md cursor-pointer border-white px-4 py-2 text-white bg-slate-500"><h2 className="hidden group-hover:block absolute backdrop-blur-3xl text-black -mt-10 -ml-10 px-2 py-1">Remove Last PSO Column</h2> Remove</button>
+                    </div>
+                </div>
+
                 <div className="overflow-x-auto border rounded-lg shadow-sm">
                     <table className="w-full text-center border-collapse">
                         <thead className="bg-gray-100">
@@ -384,8 +433,9 @@ export function InputForm({formData,setFormData,addSub,editSub,closeForm}){
                             ))}
 
                             {/* NEW PSO HEADERS */}
-                            <th className="border p-2 font-semibold">PSO1</th>
-                            <th className="border p-2 font-semibold">PSO2</th>
+                            {formData.copoMapping.rows[0].pso.map((_, i) => (
+                            <th key={i} className="border p-2 font-semibold">PSO{i + 1}</th>
+                            ))}
                             </tr>
                         </thead>
 
@@ -413,37 +463,23 @@ export function InputForm({formData,setFormData,addSub,editSub,closeForm}){
                                 </td>
                                 ))}
 
-                                {/* PSO1 */}
-                                <td className="border p-1">
-                                <input
-                                    type="number"
-                                    min="0"
-                                    max="3"
-                                    className="w-12 md:w-16 text-center border rounded-md p-1 focus:ring-2 focus:ring-slate-400"
-                                    value={row.pso1 || ""}
-                                    onChange={(e) => {
-                                    const updated = { ...formData };
-                                    updated.copoMapping.rows[rIdx].pso1 = e.target.value;
-                                    setFormData(updated);
-                                    }}
-                                />
-                                </td>
-
-                                {/* PSO2 */}
-                                <td className="border p-1">
-                                <input
-                                    type="number"
-                                    min="0"
-                                    max="3"
-                                    className="w-12 md:w-16 text-center border rounded-md p-1 focus:ring-2 focus:ring-slate-400"
-                                    value={row.pso2 || ""}
-                                    onChange={(e) => {
-                                    const updated = { ...formData };
-                                    updated.copoMapping.rows[rIdx].pso2 = e.target.value;
-                                    setFormData(updated);
-                                    }}
-                                />
-                                </td>
+                                {/* PSO Cols */}
+                                {row.pso.map((val, pIdx) => (
+                                    <td className="border p-1" key={pIdx}>
+                                        <input
+                                        type="number"
+                                        min="0"
+                                        max="3"
+                                        className="w-12 md:w-16 text-center border rounded-md p-1"
+                                        value={val}
+                                        onChange={(e) => {
+                                            const updated = { ...formData };
+                                            updated.copoMapping.rows[rIdx].pso[pIdx] = e.target.value;
+                                            setFormData(updated);
+                                        }}
+                                        />
+                                    </td>
+                                ))}
                             </tr>
                             ))}
                         </tbody>
