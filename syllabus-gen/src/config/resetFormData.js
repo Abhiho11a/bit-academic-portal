@@ -26,6 +26,6 @@ export function resetFormData(setFormData){
                     { co: "CO4", vals: Array(11).fill(""), pso: ["", ""] },
                     { co: "CO5", vals: Array(11).fill(""), pso: ["", ""] },
                 ]
-            }
+                }
     });
 }

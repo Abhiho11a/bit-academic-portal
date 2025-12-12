@@ -3,15 +3,17 @@ import { useEffect, useState } from "react";
 import ModuleEditForm from "../components/forms/ModuleEditForm";
 import { InputForm } from "../components/forms/InputForm";
 import supabase from "../services/supabaseClient";
+import Loading from "../components/common/Loading";
 
 export default function IndividualCourseDetails({courses,course_id,backToHome,setCourses}){
 
     //Retrieving particular course from courseData
     const [courseData,setCourseData] = useState([])
+    const [loadingMsg,setLoadingMsg] = useState("")
 
     useEffect(()=>{
         fetchDataFromDb()
-    })
+    },[course_id])
 
     
     // Used to Show/hide download Options
@@ -188,6 +190,12 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
 }
     {/* Function To fetch Data From DB */}
     async function fetchDataFromDb(){
+
+        setLoadingMsg("Loading...")
+        setTimeout(()=>{
+            setLoadingMsg("")
+        },1000)
+
         const {data,error} = await supabase.from("courses").select("*").eq("id",course_id).single()
         if(error)
             alert("Error while loading")
@@ -306,7 +314,8 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
 
     return (
         <>
-        <div className="max-w-6xl mx-auto mt-3 px-4 mb-5">
+        {loadingMsg && <Loading msg={loadingMsg}/>}
+        {!loadingMsg && <div className="max-w-6xl mx-auto mt-3 px-4 mb-5">
             {mod === null && editForm === "close" && !moduleEditForm[0] && <>
             <div className="flex justify-between mb-3">
                 <button 
@@ -841,7 +850,7 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
         {editForm==="open" && <InputForm formData={courseData} setFormData={setCourseData} editSub={editSubjectDetails} closeForm={()=>setEditForm("close")}/>}
         {moduleEditForm[0] && <ModuleEditForm module={moduleEditForm[1]} onSave={(updated)=>handleEditModule(updated)} onCancel={()=>showModuleEditForm([false,null,null])}/>}
 
-        </div>
+        </div>}
     </>
     )
 }

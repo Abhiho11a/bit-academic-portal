@@ -26,8 +26,6 @@ export default function App(){
   const [sidebarOpen,setSidebarOpen] = useState(false)
   const [expandedProgram, setExpandedProgram] = useState("BE")
 
-  // Program structure with departments
-  
   {/* Function To TOGGLE Prog in Main Section */}
   function handleProgramClick(prog) {
     setProgram(prog)
@@ -47,10 +45,10 @@ export default function App(){
     // },delay2)
     setCourses(dbData||[])
   }
-
+  
   useEffect(()=>{
     fetchDataFromDb()
-  },[detailedView_id,department])
+  },[department])
 
 
 
@@ -213,9 +211,15 @@ export default function App(){
     resetFormData(setFormData)
 }
 
-function editSubjectDetails(){
+  function editSubjectDetails(){
 
-  }
+    }
+
+    //Function to Reload the data after returning from individualCourse view page
+    function backToHome(){
+      setDetailedView_id(null);
+      fetchDataFromDb();
+    }
 
   return (
     <div >
@@ -363,7 +367,7 @@ function editSubjectDetails(){
         courses={courses}
         course_id={detailedView_id}
         setCourses={setCourses}
-        backToHome={() => setDetailedView_id(null)}
+        backToHome={() => backToHome()}
         />
       )}
     </div>)
