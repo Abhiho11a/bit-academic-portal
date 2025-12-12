@@ -1,23 +1,23 @@
 export const programStructure = {
     "BE/BTECH": {
-      icon: "🎓",
+      icon: "",
       departments: ["AIML", "CSE", "CSE(IOT)", "CS(DS)", "ISE", "ECE", "EEE", "EIE", "ETE", "VLSI", "ME", "CIVIL", "RAI"]
     },
     "MCA": {
-      icon: "💻",
+      icon: "",
       departments: ["MCA"]
     },
     "MBA": {
-      icon: "📊",
+      icon: "",
       departments: ["MBA"]
     },
     "MTECH": {
-      icon: "🔬",
+      icon: "",
       departments: ["CSE", "VLSI", "STRUCTURAL"]
     }
 }
 
-
+// 🎓💻📊🔬
 export const DataSchema = {
     sem:"",
     course_title:"",

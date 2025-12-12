@@ -4,6 +4,7 @@ import ModuleEditForm from "../components/forms/ModuleEditForm";
 import { InputForm } from "../components/forms/InputForm";
 import supabase from "../services/supabaseClient";
 import Loading from "../components/common/Loading";
+import PdfRender from "../components/renderers/PdfRender";
 
 export default function IndividualCourseDetails({courses,course_id,backToHome,setCourses}){
 
@@ -340,7 +341,7 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
                         {downloadMenu && (
                             <div className="absolute mt-2 w-50 bg-white shadow-lg rounded-lg border">
                                 <div className="flex flex-col gap-2 mt-1 ">
-                                    <div>DownLoad PDF</div>
+                                    <PdfRender courseData={courseData}/>
                                     <div>DownLoad JSON</div>
                                     <div>DownLoad DOCX</div>
                                 </div>
