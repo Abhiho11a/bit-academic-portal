@@ -140,12 +140,18 @@ export function PdfRenderMerged({department,courses}){
     // Page number
     doc.setFont("Cambria", "normal");
     doc.setFontSize(10);
-    doc.text(
-      String(pageNum),
-      pageWidth - M.right + 6,
-      pageHeight - 10,
-      { align: "right" }
-    );
+
+
+    const now = new Date();
+    const formatted = now.toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+    
+    doc.text(String(` | Generated on:${formatted}`),pageWidth-M.right+10,pageHeight-48,{align:"right"});
   }
   
   function addHeader() {
