@@ -6,6 +6,7 @@ import supabase from "../services/supabaseClient";
 import Loading from "../components/common/Loading";
 import PdfRender from "../components/renderers/PdfRender";
 import DocxRender from "../components/renderers/DocxRender";
+import { JsonRender } from "../components/renderers/JsonRender";
 
 export default function IndividualCourseDetails({courses,course_id,backToHome,setCourses}){
 
@@ -344,7 +345,7 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
                                 <div className="flex flex-col gap-2 mt-1 ">
                                     <PdfRender courseData={courseData}/>
                                     <DocxRender courseData={courseData}/>
-                                    <div>DownLoad DOCX</div>
+                                    <JsonRender courseData={courseData}/>
                                 </div>
                             </div>
                         )}
