@@ -10,8 +10,9 @@ import { InputForm } from './components/forms/InputForm';
 import supabase from './services/supabaseClient'
 import Sidebar from './components/common/Sidebar';
 import Loading from './components/common/Loading'
-import { resetFormData } from './config/resetFormData';
+import { getDeptName, resetFormData } from './config/resetFormData';
 import { programStructure } from './config/appConfig';
+import { PdfRenderMerged } from './components/renderers/PdfRenderMerged';
 
 export default function App(){
 
@@ -52,39 +53,7 @@ export default function App(){
 
 
 
-  //Function To Get Department name using "department"
-  function getDeptName(dept){
-    switch(dept){
-      case "CSE":
-        return "Computer Science And Engineering";
-      case "ISE":
-        return "Information Science And Engineering";
-      case "EEE":
-        return "Electrical and Electronics Engineering";
-      case "ECE":
-        return "Electronics and Communication Engineering";
-      case "EIE":
-        return "Electronics and Instrumentation Engineering";
-      case "ETE":
-        return "Electronics and Telecommunication Engineering";
-      case "AIML":
-        return "Artificial Intelligence and Machine Learning";
-      case "CSE(IOT)":
-        return "CSE (IOT & Cyber Security, Blockchain Technology)";
-      case "RAI":
-        return "Robotics & Artificial Intelligence";
-      case "VLSI":
-        return "Electronics Engineering (VLSI Design & Technology)";
-      case "CIVIL":
-        return "Civil Engineering";
-      case "ME":
-        return "Mechanical Engineering";
-      case "CS(DS)":
-        return "Computer Science & Engineering (Data Science)";
-      default:
-        return "Engineering"
-    }
-  }
+  
 
   function askCourseType(msg) {
   let type = window.prompt(
@@ -304,19 +273,7 @@ export default function App(){
             <div className="mt-5 grid grid-cols-2 gap-3 max-w-md mx-auto justify-center">
 
               {/* Download */}
-              <button
-                disabled = {courses.length === 0?true:false}
-                onClick={()=>{confirm("Are you sure want to download all courses as sigle pdf?")?"downloadAllPdfs":''}}
-                className={`flex items-center justify-center gap-2
-                          px-3 py-2 rounded-lg
-                          bg-slate-800 text-white text-sm font-medium
-                          shadow-sm hover:bg-slate-900 transition flex-1
-                          ${courses.length === 0?"cursor-no-drop":"cursor-pointer hover:-translate-y-0.5 transition-all duration-300"}
-                          `}
-              >
-                <Download size={18}/>
-                Download
-              </button>
+              <PdfRenderMerged department={department} courses={courses}/>
 
               {/* Merge */}
               <button
