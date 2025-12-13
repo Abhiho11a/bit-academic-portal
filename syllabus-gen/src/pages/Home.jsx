@@ -30,6 +30,13 @@ export default function Home(){
   const [expandedProgram, setExpandedProgram] = useState("BE")
 
   const[mergeModal,showMergeModal] = useState(false)
+  const allProgs = programStructure[program].departments;
+
+  // useEffect(()=>{
+  //   console.log(programStructure[program].departments)
+  // },[])
+
+
   const[roleModal,setRoleModal] = useState(true)
   const[role,setRole] = useState(localStorage.getItem("role"))
 
@@ -198,8 +205,6 @@ export default function Home(){
 
   return (
     <div >
-      {roleModal && <RolePopup role={role} setRole={setRole} closePopup={()=>setRoleModal(false)}/>}
-      {!roleModal && <>
       <Header/>
 
       <Sidebar
@@ -242,12 +247,12 @@ export default function Home(){
         <div className="w-full flex flex-col">
 
           {/* Department selector */}
-          {/* <div className="w-full flex justify-center mt-2">
+          <div className="w-full flex justify-center mt-2">
             <div
               className="flex gap-3 overflow-x-auto px-3 py-2
                         scrollbar-hide max-w-full"
               >
-              {departments.map((dept) => (
+              {allProgs.map((dept) => (
                 <button
                   key={dept}
                   onClick={() => setDepartment(dept)}
@@ -264,7 +269,7 @@ export default function Home(){
                 </button>
               ))}
             </div>
-          </div> */}
+          </div>
 
           {/* Department title + actions */}
           <div className="w-full max-w-6xl mx-auto px-4 mt-1">
@@ -275,6 +280,7 @@ export default function Home(){
                 {getDeptName(department)}
               </h2>
               <div className="mt-2 h-0.5 w-32 bg-blue-500 mx-auto rounded-full" />
+              <h2>Role:{role}</h2>
             </div>
 
             {/* Buttons – clean stacked layout for mobile */}
@@ -338,6 +344,5 @@ export default function Home(){
       )}
 
       {mergeModal && <MergeFilesModal onClose={()=>showMergeModal(false)}/>}
-      </>}
     </div>)
 }

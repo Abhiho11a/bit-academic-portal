@@ -430,10 +430,4 @@ export const Courses = [
 ];
 
 
-const authData = {
-  "dean":{"name":"abhi",phone:9483900245},
-  "bos": [{"name":"bos1","subject_code":"BCS301","phone":5,"email":"abhishekholla01@gmail.com"}]
-}
-
-
 

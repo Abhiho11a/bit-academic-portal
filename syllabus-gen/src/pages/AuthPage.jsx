@@ -1,13 +1,29 @@
 import React, { useState } from "react";
+import supabase from "../services/supabaseClient";
 
 export default function AuthPage({ onContinue }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [subjectCode, setSubjectCode] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name || !phone || !email || !subjectCode) return;
+
+    setLoading(true);
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email,
+    });
+
+    if (error) {
+      alert("Error sending OTP: " + error.message);
+      setLoading(false);
+      return;
+    }
+
+    console.log("OTP sent to:", email);
 
     onContinue({
       name,
@@ -15,12 +31,14 @@ export default function AuthPage({ onContinue }) {
       email,
       subjectCode,
     });
+
+    setLoading(false);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-[380px] animate-slideUp">
-        
+
         <h2 className="text-xl font-semibold text-center text-gray-800">
           User Verification
         </h2>
@@ -28,48 +46,30 @@ export default function AuthPage({ onContinue }) {
 
         <div className="flex flex-col gap-4">
 
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={name}
+          <input type="text" placeholder="Full Name" value={name}
             onChange={(e) => setName(e.target.value)}
-            className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+            className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
-          <input
-            type="tel"
-            placeholder="Phone Number"
-            value={phone}
+          <input type="tel" placeholder="Phone Number" value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+            className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
-          <input
-            type="email"
-            placeholder="Email Address"
-            value={email}
+          <input type="email" placeholder="Email Address" value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+            className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
-          <input
-            type="text"
-            placeholder="Subject Code"
-            value={subjectCode}
+          <input type="text" placeholder="Subject Code" value={subjectCode}
             onChange={(e) => setSubjectCode(e.target.value)}
-            className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+            className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
-          <button
-            onClick={handleSubmit}
-            disabled={!name || !phone || !email || !subjectCode}
+          <button onClick={handleSubmit}
+            disabled={!name || !phone || !email || !subjectCode || loading}
             className={`py-3 rounded-full font-semibold text-white transition ${
               name && phone && email && subjectCode
                 ? "bg-blue-600 hover:bg-blue-700"
                 : "bg-gray-400 cursor-not-allowed"
-            }`}
-          >
-            Continue
+            }`}>
+            {loading ? "Sending OTP..." : "Continue"}
           </button>
 
         </div>

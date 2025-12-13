@@ -10,7 +10,7 @@ export default function RolePopup({role,setRole,closePopup}) {
   useEffect(() => {
     const storedRole = localStorage.getItem("role");
     if (!storedRole) {
-      closePopup;
+      closePopup();
     } else {
       setRole(storedRole);
     }
