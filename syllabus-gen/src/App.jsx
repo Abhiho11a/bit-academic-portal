@@ -13,6 +13,7 @@ import Loading from './components/common/Loading'
 import { getDeptName, resetFormData } from './config/resetFormData';
 import { programStructure } from './config/appConfig';
 import { PdfRenderMerged } from './components/renderers/PdfRenderMerged';
+import MergeFilesModal from './components/common/MergeFilesModal';
 
 export default function App(){
 
@@ -26,6 +27,8 @@ export default function App(){
 
   const [sidebarOpen,setSidebarOpen] = useState(false)
   const [expandedProgram, setExpandedProgram] = useState("BE")
+
+  const[mergeModal,showMergeModal] = useState(false)
 
   {/* Function To TOGGLE Prog in Main Section */}
   function handleProgramClick(prog) {
@@ -277,7 +280,8 @@ export default function App(){
 
               {/* Merge */}
               <button
-                className="flex items-center justify-center gap-1
+              onClick={() => showMergeModal(true)}
+              className="flex items-center justify-center gap-1
                           px-3 py-2 rounded-lg
                           border border-blue-500
                           text-blue-600 text-sm font-medium
@@ -327,5 +331,7 @@ export default function App(){
         backToHome={() => backToHome()}
         />
       )}
+
+      {mergeModal && <MergeFilesModal onClose={()=>showMergeModal(false)}/>}
     </div>)
 }
