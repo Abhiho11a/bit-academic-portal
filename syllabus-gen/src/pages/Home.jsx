@@ -15,13 +15,20 @@ import { programStructure } from '../config/appConfig';
 import { PdfRenderMerged } from '../components/renderers/PdfRenderMerged';
 import MergeFilesModal from '../components/common/MergeFilesModal';
 import RolePopup from '../components/common/RoleUi';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home(){
 
   const [formData,setFormData] = useState(DataSchema)
   const [courses,setCourses] = useState([])
   const [program, setProgram] = useState("BE/BTECH")
-  const [department,setDepartment] = useState("CSE")
+
+  const [user] = useState(JSON.parse(localStorage.getItem("user")));
+
+const [department, setDepartment] = useState(
+  user?.role === "dean" ? "CSE" : user?.department
+);
+  
   const [detailedView_id,setDetailedView_id] = useState(null)
   const [openForm,setOpenForm] = useState(false)
   const [loadingMsg,setLoadingMsg] = useState("")
@@ -31,14 +38,57 @@ export default function Home(){
 
   const[mergeModal,showMergeModal] = useState(false)
   const allProgs = programStructure[program].departments;
-
-  // useEffect(()=>{
-  //   console.log(programStructure[program].departments)
-  // },[])
-
-
-  const[roleModal,setRoleModal] = useState(true)
+  
   const[role,setRole] = useState(localStorage.getItem("role"))
+
+  const navigate = useNavigate();
+
+  const [permissions, setPermissions] = useState({
+  addCourse: false,
+  deleteCourse: false,
+  viewCourse:false,
+  editCourse: false,
+  addBos: false,
+  addFaculty: false,
+});
+
+useEffect(() => {
+  if (role === "dean") {
+    setPermissions({
+      addCourse: true,
+      viewCourse:false,
+      deleteCourse: false,
+      editCourse: false,
+      addBos: true,
+      addFaculty: false,
+    });
+  } else if (role === "bos") {
+    setPermissions({
+      addCourse: true,
+      viewCourse:false,
+      deleteCourse: true,
+      editCourse: false,
+      addBos: false,
+      addFaculty: true,
+    });
+  } else if (role === "faculty") {
+    setPermissions({
+      addCourse: false,
+      viewCourse:true,
+      deleteCourse: false,
+      editCourse: true,
+      addBos: false,
+      addFaculty: false,
+    });
+  }
+}, [role]);
+
+useEffect(() => {
+  console.log("Permissions updated:", permissions);
+}, [permissions]);
+
+  
+
 
   {/* Function To TOGGLE Prog in Main Section */}
   function handleProgramClick(prog) {
@@ -203,6 +253,13 @@ export default function Home(){
       fetchDataFromDb();
     }
 
+    function checkBos(){
+      if(user.department === department)
+      navigate("/home/add-faculty")
+      else
+        alert(`You are not member of bos of ${department} department`)
+    }
+
   return (
     <div >
       <Header/>
@@ -220,27 +277,78 @@ export default function Home(){
 
       {/* Floating Add Button */}
       {!sidebarOpen && (
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="fixed bottom-6 left-6 w-12 h-12 rounded-full
-                        bg-slate-800 text-white shadow-lg z-50
-                        hover:bg-slate-900 transition-all hover:scale-102
-                        flex items-center justify-center"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
-          )}
+        <button
+        onClick={() => setSidebarOpen(true)}
+        className="fixed bottom-6 left-4 sm:bottom-8 sm:left-8
+                  w-12 h-12 rounded-full
+                  bg-slate-800 text-white shadow-lg z-50
+                  hover:bg-slate-900 transition-all active:scale-95
+                  flex items-center justify-center"
+      ><Menu className="w-6 h-6" /></button>
+      )}
+
       {/* Floating Menu Button */}
       {!detailedView_id && !openForm && (
+
+        <div
+  className={`fixed bottom-6 right-4 sm:bottom-8 sm:right-8
+              flex flex-col gap-3 z-50
+              ${permissions.addCourse ? "" : "hidden"}`}>
+                {/* DEAN → Add BOS */}
+  {/* {role === "dean" && (
+    <button
+      onClick={() => navigate("/home/add-bos")}
+      className="flex items-center gap-2 px-5 py-3
+                 bg-purple-800 text-white rounded-full
+                 font-semibold shadow-lg
+                 hover:bg-purple-900 transition-all
+                 active:scale-95"
+    >
+      <Plus size={18} />
+      Add BoS
+    </button>
+  )} */}
+
+  {/* BOS → Add Faculty */}
+      {/* {role !== "dean" && (
         <button
-          className="fixed bottom-6 right-6 rounded-full py-2 px-4 flex items-center gap-1
-                        bg-slate-700 text-white shadow-lg z-50
-                        hover:bg-slate-800 transition-all hover:scale-102"
-          onClick={() => setOpenForm(true)}>
-            <Plus size={18}/>
-            Add Course
+          onClick={() => checkBos()}
+          className="flex items-center gap-2 px-5 py-3
+                    bg-blue-600 text-white rounded-full
+                    font-semibold shadow-lg
+                    hover:bg-blue-700 transition-all
+                    active:scale-95"
+        >
+          <Plus size={18} />
+          Add Faculty
         </button>
+      )} */}
+
+  {/* Add Course (BOS + Faculty) */}
+  {role !== "dean" && (
+    <button
+      onClick={() =>
+        permissions.addCourse
+          ? setOpenForm(true)
+          : alert(
+              "Permission for adding courses is not provided. Please contact the Dean."
+            )
+      }
+      className="flex items-center gap-2 px-5 py-3
+                 bg-slate-700 text-white rounded-full
+                 font-semibold shadow-lg
+                 hover:bg-slate-800 transition-all
+                 active:scale-95"
+    >
+      <Plus size={18} />
+      Add Course
+    </button>
+  )}
+</div>
+
       )}
+
+      
 
       {/* MAIN HOME SCREEN */}
       {!detailedView_id && !openForm && (
@@ -280,11 +388,11 @@ export default function Home(){
                 {getDeptName(department)}
               </h2>
               <div className="mt-2 h-0.5 w-32 bg-blue-500 mx-auto rounded-full" />
-              <h2>Role:{role}</h2>
+              {/* <h2>Role:{role}</h2> */}
             </div>
 
             {/* Buttons – clean stacked layout for mobile */}
-            <div className="mt-5 grid grid-cols-2 gap-3 max-w-md mx-auto justify-center">
+            <div className="mt-5 grid grid-cols-3 gap-3 max-w-md mx-auto justify-center">
 
               {/* Download */}
               <PdfRenderMerged department={department} courses={courses}/>
@@ -301,6 +409,25 @@ export default function Home(){
                 <Link size={18}/>
                 Merge
               </button>
+
+              {role === "dean" && (
+              <button
+                onClick={() => navigate("/home/manage-bos")}
+                className="px-4 py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-800"
+              >
+                Manage BoS
+              </button>
+            )}
+
+            {role === "bos" && (
+              <button
+                onClick={() => navigate("/home/manage-faculty")}
+                className="px-3 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800"
+              >
+                Manage Faculty
+              </button>
+            )}
+
             </div>
           </div>
 
@@ -311,6 +438,7 @@ export default function Home(){
               ?<h2 className='text-center mt-10'>No Data Found</h2>
               :<div className="w-full max-w-6xl mx-auto px-3 mt-6">
                   <TableComponent
+                  permissions={permissions}
                   courses={courses}
                   setCourses={setCourses}
                   setDetailedView={setDetailedView_id}

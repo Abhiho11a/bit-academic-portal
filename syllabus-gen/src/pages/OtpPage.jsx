@@ -55,8 +55,21 @@ export default function OtpPage({ userData, onVerified }) {
       return;
     }
 
-    localStorage.setItem("auth", "verified");
-    onVerified();
+    localStorage.setItem(
+  "user",
+  JSON.stringify({
+    name: userData.name,
+    email: userData.email,
+    phone: userData.phone,
+    subjectCode: userData.subjectCode,
+    department: userData.department,
+    role: userData.role,
+  })
+);
+
+localStorage.setItem("auth", "verified");
+onVerified();
+
   };
 
   return (

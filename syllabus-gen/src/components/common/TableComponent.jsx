@@ -1,21 +1,33 @@
 import { Eye, Trash2 } from "lucide-react";
 import supabase from "../../services/supabaseClient";
 
-export function TableComponent({courses,setCourses,setDetailedView}){
+export function TableComponent({permissions,courses,setCourses,setDetailedView}){
 
+
+    function viewCourse(id){
+        if(permissions.viewCourse)
+            setDetailedView(id)
+        else
+            alert("You Dont have permission to view Course")
+            
+    }
     async function deleteCourse(course_id){
         
         //Find course with id===course_id
-        const del_course = courses.find(it => it.id === course_id)
-
-        //Confirm DELETION and Delete COURSE from DATABASE
-        if(confirm(`Are you Sure want to delete Details of course with CODE :- ${del_course.course_code}`))
+        if(permissions.deleteCourse)
         {
-            const {error} = await supabase.from("courses").delete().eq("id",course_id);
-        
-            if(!error)
-                setCourses(prev=>prev.filter(it=>it.id!==course_id))
+            const del_course = courses.find(it => it.id === course_id)
+    
+            //Confirm DELETION and Delete COURSE from DATABASE
+            if(confirm(`Are you Sure want to delete Details of course with CODE :- ${del_course.course_code}`))
+            {
+                const {error} = await supabase.from("courses").delete().eq("id",course_id);
+                if(!error)
+                    setCourses(prev=>prev.filter(it=>it.id!==course_id))
+            }
         }
+        else
+            alert("You dont have permissions to delete Course")
   }
     return (
     <div className="bg-white rounded-lg overflow-hidden mt-1">
@@ -75,7 +87,7 @@ export function TableComponent({courses,setCourses,setDetailedView}){
                             <div className="flex items-center justify-center gap-3">
                                 {/* VIEW BUTTON */}
                                 <button
-                                    onClick={() => setDetailedView(course.id)}
+                                    onClick={() => viewCourse(course.id)}
                                     className="flex items-center gap-1 bg-slate-600 text-white hover:bg-slate-700 
                                                 rounded-lg py-1 px-2 text-sm transition cursor-pointer"
                                 >

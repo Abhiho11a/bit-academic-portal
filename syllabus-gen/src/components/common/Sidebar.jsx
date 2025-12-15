@@ -1,8 +1,22 @@
-import { ChevronDown, ChevronRight, X } from "lucide-react"
+import { ChevronDown, ChevronRight, User, X } from "lucide-react"
 import '../../App.css'
+import ProfileMenu from "./ProfileMenu"
+import ProfilePage from "./ProfileMenu"
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export default function Sidebar({sidebarOpen,setSidebarOpen,programStructure,expandedProgram,program,department,setDepartment,setExpandedProgram,handleProgramClick}){
-    return (
+
+  const navigate = useNavigate();
+  const role = localStorage.getItem("role");
+  const [user,setUser] = useState(JSON.parse(localStorage.getItem("user")))
+  
+
+
+  function navToProfilePage(){
+    navigate('/home/profile')
+  }
+  return (
     <>
       {/* Backdrop/Overlay - darkens background when sidebar is open */}
       {sidebarOpen && (
@@ -87,6 +101,10 @@ export default function Sidebar({sidebarOpen,setSidebarOpen,programStructure,exp
             )
           })}
         </div>
+        <div className="flex justify-between  mb-3 mx-4" >
+          {role !== "none"
+          ?<div className="flex w-full bg-slate-700 hover:bg-slate-600 cursor-pointer gap-2 px-3 py-2 rounded-lg" onClick={()=>navToProfilePage()}><User/><h2>{user.name}</h2></div>
+          :<button className="w-full py-2 bg-red-500 cursor-pointer hover:bg-red-400 rounded-lg" onClick={()=>navigate('/')}>Login</button>}</div>
       </div>
     </>
   )

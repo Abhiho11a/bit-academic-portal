@@ -13,6 +13,7 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
     //Retrieving particular course from courseData
     const [courseData,setCourseData] = useState([])
     const [loadingMsg,setLoadingMsg] = useState("")
+    const [userData,setUserData] = useState(JSON.parse(localStorage.getItem("user")))
 
     useEffect(()=>{
         fetchDataFromDb()
@@ -352,9 +353,17 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
                     </div>
 
                     <button
-                    onClick={() => setEditForm("open")} 
+                    onClick={() => {
+                        if(userData.subjectCode == courseData.course_code)
+                        setEditForm("open");
+                        else
+                        {
+                            alert("You are not a faculty incharge of this subject to edit details")
+                        }
+                    
+                    }} 
                     className="flex px-4 gap-2 items-center py-1.5 rounded-md bg-slate-700 text-white  cursor-pointer
-                                hover:bg-slate-800 transition font-medium shadow-sm text-xs md:text-[15px] "
+                                hover:bg-slate-800 transition font-medium shadow-sm text-xs md:text-[15px]"
                     >
                         <Edit size={18}/><p className="text-xs md:text-[15px] hidden md:block">Edit</p>
                     </button>

@@ -23,9 +23,12 @@ export default function RolePopup({role,setRole,closePopup}) {
   };
 
   const handleClose = () => {
-    setRole("none");
-    localStorage.setItem("role", "none");
-    closePopup();
+    if(confirm("Are u sure want to view web as a guest?")){
+      setRole("none");
+      localStorage.setItem("role", "none");
+      closePopup();
+      nav('/home')
+    }
   };
 
   return (

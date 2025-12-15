@@ -5,6 +5,11 @@ import RolePopup from "./components/common/RoleUi";
 import AuthPage from "./pages/AuthPage";
 import OtpPage from "./pages/OtpPage";
 import Home from "./pages/Home";
+import ProfilePage from "./components/common/ProfileMenu";
+import AddBosPage from "./pages/AddBosPage";
+import AddFacultyPage from "./pages/AddFaculty";
+import ManageBos from "./pages/ManageBos";
+import ManageFaculty from "./pages/ManageFaculty";
 
 export default function App() {
   const [role, setRole] = useState(null);
@@ -20,13 +25,12 @@ export default function App() {
       <Route
         path="/"
         element={
-          showPopup ? (
             <RolePopup 
               role={role} 
               setRole={setRole}
               closePopup={closePopup}
             />
-          ) : null
+          
         }
       />
 
@@ -34,6 +38,7 @@ export default function App() {
         path="/auth"
         element={
           <AuthPage
+            role={role}
             onContinue={(data) => {
               setUserData(data);
               navigate("/otp");
@@ -51,8 +56,38 @@ export default function App() {
           />
         }
       />
+      <Route path="/home" element={<Home role={role} user={userData}/>} />
+      <Route
+        path="/home/profile"
+        element={
+          <ProfilePage backToHome={()=>navigate("/home")}/>
+        }
+      />
+      <Route
+        path="/home/add-bos"
+        element={
+          <AddBosPage/>
+        }
+      />
+      <Route
+        path="/home/manage-bos"
+        element={
+          <ManageBos/>
+        }
+      />
+      <Route
+        path="/home/manage-faculty"
+        element={
+          <ManageFaculty/>
+        }
+      />
+      <Route
+        path="/home/add-faculty"
+        element={
+          <AddFacultyPage/>
+        }
+      />
 
-      <Route path="/home" element={<Home role={role} />} />
     </Routes>
   );
 }
