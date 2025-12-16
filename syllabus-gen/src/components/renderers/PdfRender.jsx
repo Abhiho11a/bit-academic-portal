@@ -241,14 +241,14 @@ doc.text(
   
   
   // auto add header on new page
-  doc.internal.events.subscribe("addPage", () => {
-    addHeader();
-    curY = M.top + 70;
-  });
+  // doc.internal.events.subscribe("addPage", () => {
+  //   addHeader();
+  //   curY = M.top + 70;
+  // });
   
-  addHeader();
+  // addHeader();
   
-  curY += 22;
+  curY += 75;
   doc.setFont('PTSerif-Bold', 'bold'); 
   doc.setFontSize(14);
   doc.setTextColor(0, 0, 0);
@@ -495,7 +495,7 @@ doc.setFontSize(11);
     didDrawPage: function(data) {
       // If this is NOT the first page of the table, add header
       if (data.pageNumber > 1 || doc.internal.getCurrentPageInfo().pageNumber > 1) {
-        addHeader(); // Add your header
+        // addHeader(); // Add your header
         curY = M.top + 100; // Start table below header
 
       }
@@ -740,7 +740,7 @@ doc.setFontSize(11);
     if (spaceLeft < 100) {
         addFooter(doc.getNumberOfPages());
         doc.addPage();
-        addHeader(); // ✅ Add header on new page
+        // addHeader(); // ✅ Add header on new page
         curY = M.top + 95; // Start below header
     }
 
@@ -841,7 +841,7 @@ curY += 10;
     if (spaceLeft < 100) {
         addFooter(doc.getNumberOfPages());
         doc.addPage();
-        addHeader(); // ✅ Add header on new page
+        // addHeader(); // ✅ Add header on new page
         curY = M.top + 95; // Start below header
     }
 
@@ -855,7 +855,7 @@ if (data.copoMapping && Array.isArray(data.copoMapping.rows)) {
   if (spaceLeft < 100) {
         addFooter(doc.getNumberOfPages());
         doc.addPage();
-        addHeader(); // ✅ Add header on new page
+        // addHeader(); // ✅ Add header on new page
         curY = M.top + 60; // Start below header
     }
   
@@ -900,7 +900,6 @@ const avgRow = [
   )
 ];
 
-
 autoTable(doc, {
   startY: curY + 10,
   head: [poHeaders],
@@ -938,7 +937,20 @@ autoTable(doc, {
 
 
 //FOOTER
-    addFooter(doc.getNumberOfPages());
+    // addFooter(doc.getNumberOfPages());
+
+
+    // ================= HEADER & FOOTER: FIRST + LAST PAGE ONLY =================
+const totalPages = doc.getNumberOfPages();
+
+for (let i = 1; i <= totalPages; i++) {
+  if (i === 1 || i === totalPages) {
+    doc.setPage(i);
+    addHeader();
+    addFooter(i);
+  }
+}
+
 
     // Save
     const fileName = `${courseData.course_code}`
