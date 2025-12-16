@@ -924,7 +924,7 @@ export function PdfRenderMerged({department,courses}){
           className="flex items-center justify-center gap-2
                      px-3 py-2 rounded-lg
                      bg-slate-800 text-white text-sm font-medium
-                     shadow-sm hover:bg-slate-900 transition flex-1"
+                     shadow-sm hover:bg-slate-900 hover:cursor-pointer hover:-translate-y-0.5 transition-all duration-300 flex-1"
         >
           <Download/>
           Download

@@ -168,19 +168,6 @@ export default function PdfRender({ courseData }) {
     { align: "center" }
   );
 
-  //Generated Date
-  doc.setFont("Cambria","normal");
-  doc.setFontSize(10);
-  const now = new Date();
-  const formatted = now.toLocaleString("en-IN", {
-   day: "2-digit",
-   month: "short",
-   year: "numeric",
-   hour: "2-digit",
-   minute: "2-digit"
-});
-  doc.text(String(` | Generated on:${formatted}`),pageWidth-M.right+10,pageHeight-48,{align:"right"});
-
   
   // Page number
   doc.setFont("Cambria", "normal");
@@ -216,7 +203,30 @@ function addHeader() {
     doc.setFont('PTSerif-Bold', 'bold'); 
     doc.setFontSize(8);
     doc.setTextColor(0, 102, 200);
-    doc.text("An Autonomous Institution Under VTU, Belagum", centerX(), curY-9, { align: "center" });
+    doc.text("An Autonomous Institution Under VTU, Belagavi", centerX(), curY-9, { align: "center" });
+    
+    //Generated Date
+    // Generated Date (Header - top right)
+    doc.setFont("Cambria", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(0, 0, 0);
+    
+const now = new Date();
+const formatted = now.toLocaleString("en-IN", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
+doc.text(
+  `Generated on: ${formatted}`,
+  pageWidth - M.right +2,  // align with right margin
+  86,                   // Y-position above red line
+  { align: "right" }
+);
+
 
     //Red Line under Header
     doc.setDrawColor(204, 0, 0);

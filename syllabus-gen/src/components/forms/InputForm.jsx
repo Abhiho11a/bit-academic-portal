@@ -1,4 +1,6 @@
-import { X } from "lucide-react";
+import { Check, Edit2, Plus, Trash2, X } from "lucide-react";
+import { useState } from "react";
+import supabase from "../../services/supabaseClient";
 
 export function InputForm({formData,setFormData,addSub,editSub,closeForm}){
 
@@ -115,6 +117,113 @@ export function InputForm({formData,setFormData,addSub,editSub,closeForm}){
         //AFTER ALL CLOSE FORM
         closeForm();
 }
+
+    const handleModuleChange = (idx, e) => {
+        const { name, value } = e.target;
+
+        setFormData(prev => {
+            const updatedModules = [...prev.modules];
+
+            updatedModules[idx] = {
+            ...updatedModules[idx],
+            [name]: value
+            };
+
+            return {
+            ...prev,
+            modules: updatedModules
+            };
+        });
+    };
+
+    const [newExpNo, setNewExpNo] = useState("");
+    const [newExpCont, setNewExpCont] = useState("");
+    const [editingExpIndex, setEditingExpIndex] = useState(null);
+    const [editExpNo, setEditExpNo] = useState("");
+    const [editExpCont, setEditExpCont] = useState("");
+
+    //Adding new Experiment
+        const addNewExperiment = () => {
+  if (!newExpNo || !newExpCont) {
+    alert("Please fill all the details");
+    return;
+  }
+
+  setFormData(prev => {
+    const updatedExps = [
+      ...(prev.experiments || []),
+      {
+        slno: parseInt(newExpNo),
+        cont: newExpCont
+      }
+    ].sort((a, b) => a.slno - b.slno);
+
+    return {
+      ...prev,
+      experiments: updatedExps
+    };
+  });
+
+  setNewExpNo("");
+  setNewExpCont("");
+};
+
+        //Delete Experiment
+        const handleDeleteExperiment = (index) => {
+  if (!window.confirm("Are you sure you want to delete this experiment?"))
+    return;
+
+  setFormData(prev => ({
+    ...prev,
+    experiments: prev.experiments.filter((_, i) => i !== index)
+  }));
+};
+
+    
+        // Start Edit
+        const startEditExperiment = (index) => {
+  const exp = formData.experiments[index];
+  setEditingExpIndex(index);
+  setEditExpNo(exp.slno);
+  setEditExpCont(exp.cont);
+};
+
+    
+        // Edit Experiment
+        const saveEditExperiment = () => {
+  if (!editExpNo || !editExpCont) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  setFormData(prev => {
+    const updatedExps = [...prev.experiments];
+    updatedExps[editingExpIndex] = {
+      slno: parseInt(editExpNo),
+      cont: editExpCont
+    };
+
+    updatedExps.sort((a, b) => a.slno - b.slno);
+
+    return {
+      ...prev,
+      experiments: updatedExps
+    };
+  });
+
+  setEditingExpIndex(null);
+  setEditExpNo("");
+  setEditExpCont("");
+};
+
+    
+        const cancelEditExperiment = () => {
+  setEditingExpIndex(null);
+  setEditExpNo("");
+  setEditExpCont("");
+};
+
+
 
 
     return (
@@ -269,16 +378,6 @@ export function InputForm({formData,setFormData,addSub,editSub,closeForm}){
                 </div>
             </div>
 
-            {/* ======== COURSE OUTCOMES ======== */}
-            <div className="mt-8">
-                <label className="text-sm font-semibold text-slate-600">Course Outcomes</label>
-                <textarea
-                    value={formData.course_outcomes}
-                    onChange={e => setFormData({ ...formData, course_outcomes: e.target.value })}
-                    className="w-full mt-2 p-3 bg-gray-50 border border-gray-300 rounded-lg h-32 resize-none
-                            focus:ring-2 focus:ring-slate-400 outline-none"
-                />
-            </div>
 
             {/* ======== COURSE OBJECTIVES ======== */}
             <div className="mt-8">
@@ -291,6 +390,257 @@ export function InputForm({formData,setFormData,addSub,editSub,closeForm}){
                 />
             </div>
 
+            {/* Modules Details */}
+            <div className="flex flex-col gap-10 mt-5">
+                <h2 className="text-sm font-semibold text-slate-600">Modules Details</h2>
+                {formData.modules.map((it,idx) => <div className="border-2 p-4 border-gray-200 space-y-4">
+                    <h2 className="text-center text-xl">Module-{idx+1}</h2>
+
+                    {/* Module Title */}
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        Module Title
+                    </label>
+                    <input
+                        type="text"
+                        name="title"
+                        value={formData.modules[idx].title}
+                        onChange={(e) => handleModuleChange(idx,e)}
+                        className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    />
+                    </div>
+
+                    {/* Content */}
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        Topics Covered
+                    </label>
+                    <textarea
+                        name="content"
+                        rows="4"
+                        value={formData.modules[idx].content}
+                        onChange={(e) => handleModuleChange(idx,e)}
+                        className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    ></textarea>
+                    </div>
+
+                    {/* Textbook */}
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        Text Book No.
+                    </label>
+                    <input
+                        type="text"
+                        name="textbook"
+                        value={formData.modules[idx].textbook}
+                        onChange={(e) => handleModuleChange(idx,e)}
+                        className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    />
+                    </div>
+
+                    {/* Chapter */}
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        Chapter Article No.
+                    </label>
+                    <input
+                        type="text"
+                        name="chapter"
+                        value={formData.modules[idx].chapter}
+                        onChange={(e) => handleModuleChange(idx,e)}
+                        className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    />
+                    </div>
+
+                    {/* RBT */}
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        RBT Level(s)
+                    </label>
+                    <input
+                        type="text"
+                        name="rbt"
+                        value={formData.modules[idx].rbt}
+                        onChange={(e) => handleModuleChange(idx,e)}
+                        className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    />
+                    </div>
+        </div>)}
+      </div>
+
+            {/* Experiments */}            
+            {(formData.course_type === "PCCL"||formData.course_type === "IPCC" || formData.course_type === "AEC" || formData.course_type === "ESC" || formData.experiments) && (
+  <div className="my-10 py-3 px-5 border-2 border-gray-200 bg-white">
+                        <label className="text-sm font-semibold text-slate-600">Experiments</label> 
+
+    {/* Add Experiment Form */}
+    <div className="mt-2 mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+      <h3 className="text-sm font-semibold text-blue-900 mb-3">
+        Add New Experiment
+      </h3>
+
+      <div className="flex flex-col md:flex-row gap-3">
+        <input
+          type="number"
+          placeholder="Sl No."
+          value={newExpNo}
+          onChange={(e) => setNewExpNo(Number(e.target.value))}
+          className="w-full md:w-24 px-3 py-2 border-2 border-blue-300 rounded-md focus:outline-none focus:border-blue-500 transition"
+        />
+
+        <input
+          type="text"
+          placeholder="Enter Experiment Description..."
+          value={newExpCont}
+          onChange={(e) => setNewExpCont(e.target.value)}
+          className="flex-1 px-3 py-2 border-2 border-blue-300 rounded-md focus:outline-none focus:border-blue-500 transition"
+        />
+
+        <button
+          type="button"
+          onClick={addNewExperiment}
+          className="flex items-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition font-medium whitespace-nowrap"
+        >
+          <Plus size={18} />
+          Add
+        </button>
+      </div>
+    </div>
+
+    {/* Experiments Table */}
+    {(!formData.experiments || formData.experiments.length === 0) ? (
+      <div className="text-center py-12 text-gray-500">
+        <p className="text-lg">No experiments added yet</p>
+        <p className="text-sm mt-2">
+          Add your first experiment using the form above
+        </p>
+      </div>
+    ) : (
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-slate-700 text-white">
+              <th className="px-4 py-3 text-left font-semibold w-20 border-r border-slate-500">
+                Sl No
+              </th>
+              <th className="px-4 py-3 text-left font-semibold border-r border-slate-500">
+                Experiment
+              </th>
+              <th className="px-4 py-3 text-center font-semibold w-32">
+                Actions
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {formData.experiments.map((exp, idx) => (
+              <tr
+                key={exp.slno ?? idx}
+                className={`border-b border-gray-200 transition ${
+                  idx % 2 === 0 ? "bg-white" : "bg-gray-50"
+                }`}
+              >
+                {editingExpIndex === idx ? (
+                  <>
+                    {/* EDIT MODE */}
+                    <td className="px-4 py-3 border-r border-gray-200">
+                      <input
+                        type="number"
+                        value={editExpNo}
+                        onChange={(e) =>
+                          setEditExpNo(Number(e.target.value))
+                        }
+                        className="w-16 px-2 py-1 border-2 border-blue-400 rounded focus:outline-none"
+                      />
+                    </td>
+
+                    <td className="px-4 py-3 border-r border-gray-200">
+                      <textarea
+                        value={editExpCont}
+                        onChange={(e) =>
+                          setEditExpCont(e.target.value)
+                        }
+                        rows={2}
+                        className="w-full px-2 py-1 border-2 border-blue-400 rounded focus:outline-none resize-none"
+                      />
+                    </td>
+
+                    <td className="px-4 py-3">
+                      <div className="flex justify-center gap-2">
+                        <button
+                          type="button"
+                          onClick={saveEditExperiment}
+                          className="px-3 py-2 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition font-medium"
+                          title="Save"
+                        >
+                          <Check size={16} />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={cancelEditExperiment}
+                          className="px-3 py-2 bg-gray-500 text-white text-sm rounded hover:bg-gray-600 transition font-medium"
+                          title="Cancel"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    {/* VIEW MODE */}
+                    <td className="px-4 py-3 text-center font-semibold text-gray-700 border-r border-gray-200">
+                      {exp.slno}
+                    </td>
+
+                    <td className="px-4 py-3 text-gray-700 leading-relaxed border-r border-gray-200">
+                      {exp.cont}
+                    </td>
+
+                    <td className="px-4 py-3">
+                      <div className="flex justify-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => startEditExperiment(idx)}
+                          className="px-3 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition font-medium"
+                          title="Edit"
+                        >
+                          <Edit2 size={16} />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteExperiment(idx)}
+                          className="px-3 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition font-medium"
+                          title="Delete"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+)}
+
+            
+            {/* ======== COURSE OUTCOMES ======== */}
+            <div className="mt-8">
+                <label className="text-sm font-semibold text-slate-600">Course Outcomes</label>
+                <textarea
+                    value={formData.course_outcomes}
+                    onChange={e => setFormData({ ...formData, course_outcomes: e.target.value })}
+                    className="w-full mt-2 p-3 bg-gray-50 border border-gray-300 rounded-lg h-32 resize-none
+                            focus:ring-2 focus:ring-slate-400 outline-none"
+                />
+            </div>
             {/* ======== TEACHING LEARNING ======== */}
             <div className="mt-6">
                 <label className="text-sm font-semibold text-slate-600">Teaching & Learning</label>

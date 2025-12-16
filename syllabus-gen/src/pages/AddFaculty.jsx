@@ -111,7 +111,7 @@ export default function AddFacultyPage() {
 
         <div className="flex justify-between">
             <h2 className="text-xl font-semibold text-center text-gray-800">
-            Add Faculty
+            {isEdit?"Update Faculty":"Add Faculty"}
             </h2>
             <X onClick={()=>navigate("/home/manage-faculty")}/>
         </div>

@@ -35,22 +35,22 @@ export default function ManageBoSPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="flex flex-col justify-center items-center p-6">
 
       {/* 🔥 Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex w-full md:w-[90%] justify-between items-center mb-6">
       <button
           onClick={() => {
             navigate("/home")
           }}
           className="flex items-center gap-2 bg-black/10 text-black
                      px-5 py-2 rounded-full font-semibold
-                     hover:bg-slate-200 transition border-blue-200 border-2 hover:border-blue-500"
+                     hover:bg-slate-200 transition border-blue-200 border-2 hover:border-blue-500 cursor-pointer"
         >
           <ArrowLeft size={18} />
-          Back to home
+          <h2 className="hidden md:block">Back to home</h2>
         </button>
-        <h1 className="text-2xl font-semibold text-slate-800">
+        <h1 className="text-2xl font-semibold text-slate-800 px-5 text-center">
           Manage Board of Studies
         </h1>
 
@@ -60,15 +60,15 @@ export default function ManageBoSPage() {
           className="flex items-center gap-2
                      bg-purple-700 text-white px-5 py-2
                      rounded-full font-medium
-                     hover:bg-purple-800 transition"
+                     hover:bg-purple-800 transition cursor-pointer"
         >
           <Plus size={18} />
-          Add BoS
+          <h2 className="hidden md:block">Add BoS</h2>
         </button>
       </div>
 
       {/* 🧱 BoS Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid w-full md:w-[90%] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {bosList.map((bos) => (
           <div
             key={bos.id}

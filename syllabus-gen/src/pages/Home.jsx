@@ -14,7 +14,6 @@ import { getDeptName, resetFormData } from '../config/resetFormData';
 import { programStructure } from '../config/appConfig';
 import { PdfRenderMerged } from '../components/renderers/PdfRenderMerged';
 import MergeFilesModal from '../components/common/MergeFilesModal';
-import RolePopup from '../components/common/RoleUi';
 import { useNavigate } from 'react-router-dom';
 
 export default function Home(){
@@ -221,6 +220,7 @@ useEffect(() => {
       course_outcomes: formData.course_outcomes,
       teaching_learning: formData.teaching_learning,
       referral_links: formData.referral_links,
+      experiments:formData.experiments,
       textbooks: formData.textbooks,
       modules: formData.modules,
       activity_based: formData.activity_based,
@@ -300,7 +300,7 @@ const scrollRight = () => {
                   w-12 h-12 rounded-full
                   bg-slate-800 text-white shadow-lg z-50
                   hover:bg-slate-900 transition-all active:scale-95
-                  flex items-center justify-center"
+                  flex items-center justify-center hover:scale-105 cursor-pointer"
       ><Menu className="w-6 h-6" /></button>
       )}
 
@@ -451,7 +451,7 @@ const scrollRight = () => {
               {role === "dean" && (
               <button
                 onClick={() => navigate("/home/manage-bos")}
-                className="px-4 py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-800"
+                className="px-4 py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-800 hover:cursor-pointer hover:-translate-y-0.5 transition-all duration-300"
               >
                 Manage BoS
               </button>
@@ -460,7 +460,7 @@ const scrollRight = () => {
             {role === "bos" && (
               <button
                 onClick={() => navigate("/home/manage-faculty")}
-                className="px-3 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800"
+                className="px-3 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 hover:cursor-pointer hover:-translate-y-0.5 transition-all duration-300"
               >
                 Manage Faculty
               </button>

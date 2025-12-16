@@ -36,7 +36,7 @@ export default function ProfilePage({backToHome}) {
         <div className="space-y-3">
           <p><b>Email:</b> {user.email?user.email:'-'}</p>
           <p><b>Phone:</b> {user.phone?user.phone:'-'}</p>
-          <p><b>Department:</b> {user.department?user.department:"—"}</p>
+          {user.role === "faculty" && <p><b>Department:</b> {user.department?user.department:"—"}</p>}
           <p><b>Role:</b> {user.role?user.role:"—"}</p>
           {user.role === "faculty" && <p><b>Subject Code:</b> {user.subjectCode || "—"}</p>}
         </div>
