@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import '../App.css'
 import { Courses } from '../data/data';
 import { DataSchema } from '../config/appConfig';
-import { Link, Menu, Plus } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Link, Menu, Plus } from 'lucide-react'
 import Header from '../components/common/Header';
 import { TableComponent } from '../components/common/TableComponent';
 import IndividualCourseDetails from './IndividualCourseDetails';
@@ -260,6 +260,23 @@ useEffect(() => {
         alert(`You are not member of bos of ${department} department`)
     }
 
+    const scrollRef = useRef(null);
+
+const scrollLeft = () => {
+  scrollRef.current.scrollBy({
+    left: -200,
+    behavior: "smooth",
+  });
+};
+
+const scrollRight = () => {
+  scrollRef.current.scrollBy({
+    left: 200,
+    behavior: "smooth",
+  });
+};
+
+
   return (
     <div >
       <Header/>
@@ -352,32 +369,53 @@ useEffect(() => {
 
       {/* MAIN HOME SCREEN */}
       {!detailedView_id && !openForm && (
-        <div className="w-full flex flex-col">
+        <div className="w-full flex flex-col items-center">
 
           {/* Department selector */}
-          <div className="w-full flex justify-center mt-2">
-            <div
-              className="flex gap-3 overflow-x-auto px-3 py-2
-                        scrollbar-hide max-w-full"
-              >
-              {allProgs.map((dept) => (
-                <button
-                  key={dept}
-                  onClick={() => setDepartment(dept)}
-                  className={`rounded-full font-medium
-                              whitespace-nowrap transition px-4 py-1.5 text-sm border-2 
-                              md:px-5 md:py-2 md:text-base
-                              ${
-                                department === dept
-                                ? " text-slate-700 shadow-md border-purple-400"
-                                : "text-slate-700 border-gray-300 hover:bg-gray-100"
-                              }`}
-                              >
-                                {dept}
-                </button>
-              ))}
-            </div>
-          </div>
+          <div className="flex w-[95%] justify-center items-center gap-2 mt-4">
+
+  {/* LEFT ARROW */}
+  <button
+    onClick={scrollLeft}
+    className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition"
+  >
+    <ChevronLeft size={20} />
+  </button>
+
+  {/* SCROLLABLE DEPARTMENTS */}
+  <div
+    ref={scrollRef}
+    className="flex gap-3 overflow-x-auto px-3 py-2
+               hide-scrollbar max-w-[80%]"
+  >
+    {allProgs.map((dept) => (
+      <button
+        key={dept}
+        onClick={() => setDepartment(dept)}
+        className={`rounded-full font-medium
+                    whitespace-nowrap transition px-4 py-1.5 text-sm border-2
+                    md:px-5 md:py-2 md:text-base
+                    ${
+                      department === dept
+                        ? "border-purple-400 text-slate-800 shadow-md"
+                        : "border-gray-300 text-slate-600 hover:bg-gray-100"
+                    }`}
+      >
+        {dept}
+      </button>
+    ))}
+  </div>
+
+  {/* RIGHT ARROW */}
+  <button
+    onClick={scrollRight}
+    className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition"
+  >
+    <ChevronRight size={20} />
+  </button>
+
+</div>
+
 
           {/* Department title + actions */}
           <div className="w-full max-w-6xl mx-auto px-4 mt-1">
@@ -392,7 +430,7 @@ useEffect(() => {
             </div>
 
             {/* Buttons – clean stacked layout for mobile */}
-            <div className="mt-5 grid grid-cols-3 gap-3 max-w-md mx-auto justify-center">
+            <div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3 max-w-md mx-auto justify-center">
 
               {/* Download */}
               <PdfRenderMerged department={department} courses={courses}/>

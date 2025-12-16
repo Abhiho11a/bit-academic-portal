@@ -32,7 +32,7 @@ export function TableComponent({permissions,courses,setCourses,setDetailedView})
     return (
     <div className="bg-white rounded-lg overflow-hidden mt-1">
         <div className="overflow-x-auto">
-            <table className="w-[95%] md:w-[70%] border-collapse justify-self-center">
+            <table className="w-full md:w-[70%] border-collapse justify-self-center">
                 <thead>
                     <tr className="bg-slate-600">
                     <th className="hidden md:table-cell py-4 px-4 text-left text-white font-bold border-r border-blue-300">
