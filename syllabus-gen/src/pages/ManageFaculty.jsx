@@ -2,18 +2,23 @@ import { Plus, Edit, Trash2, Mail, Phone, ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import supabase from "../services/supabaseClient";
 import { useNavigate } from "react-router-dom";
+import Loading from "../components/common/Loading";
 
 export default function ManageFaculty() {
   // 🔹 Later: fetch faculty list from Supabase
 
   const [facultyList,setFaculties] = useState([])
   const user = JSON.parse(localStorage.getItem("user"))
+  const [loading,setLoading] = useState(false);
+  
   const navigate = useNavigate()
 
   useEffect(()=>{
 
     async function fetchFaculty(){
+        setLoading(true)
         const {data,error} = await supabase.from("faculty_members").select("*").eq("department",user.department)
+        setLoading(false)
         setFaculties(data)
     }
 
@@ -75,7 +80,7 @@ export default function ManageFaculty() {
       </div>
 
       {/* Faculty Cards Grid */}
-      <div className="grid w-full md:w-[90%] grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 ">
+      {loading?<Loading msg="Loading..."/>:<div className="grid w-full md:w-[90%] grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 ">
   {facultyList.map((faculty) => (
     <div
       key={faculty.id}
@@ -136,7 +141,7 @@ export default function ManageFaculty() {
       </div>
     </div>
   ))}
-</div>
+</div>}
 
     </div>
   );

@@ -2,17 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Plus, Edit2, Trash2, Phone, Mail, Pencil, User, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import supabase from "../services/supabaseClient";
+import Loading from '../components/common/Loading'
 
 export default function ManageBoSPage() {
   const navigate = useNavigate();
   const [bosList, setBosList] = useState([]);
+  const [loading,setLoading] = useState(false);
   
   const user = JSON.parse(localStorage.getItem("user"))
   useEffect(() => {
 
     async function fetchBos() {
-        const {data,error} = await supabase.from("bos_members").select("*")
-        setBosList(data)
+      setLoading(true)
+      const {data,error} = await supabase.from("bos_members").select("*")
+      setBosList(data)
+      setLoading(false)
     }
     fetchBos()
   }, []);
@@ -37,7 +41,7 @@ export default function ManageBoSPage() {
   return (
     <div className="flex flex-col justify-center items-center p-6">
 
-      {/* 🔥 Header */}
+      {/* Header */}
       <div className="flex w-full md:w-[90%] justify-between items-center mb-6">
       <button
           onClick={() => {
@@ -68,7 +72,7 @@ export default function ManageBoSPage() {
       </div>
 
       {/* 🧱 BoS Grid */}
-      <div className="grid w-full md:w-[90%] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {loading?<Loading msg="Loading"/>:<div className="grid w-full md:w-[90%] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {bosList.map((bos) => (
           <div
             key={bos.id}
@@ -115,7 +119,7 @@ export default function ManageBoSPage() {
             </div>
           </div>
         ))}
-      </div>
+      </div>}
     </div>
   );
 }

@@ -343,7 +343,7 @@ export function InputForm({formData,setFormData,addSub,editSub,closeForm}){
                 <div className="md:w-1/8 w-full">
                     <label className="text-sm font-semibold text-slate-600">Pedagogy</label>
                     <input
-                    type="number"
+                    type="text"
                     value={formData.pedagogy}
                     onChange={e => setFormData({ ...formData, pedagogy: e.target.value })}
                     className="mt-2 p-3 bg-gray-50 border border-gray-300 rounded-lg 

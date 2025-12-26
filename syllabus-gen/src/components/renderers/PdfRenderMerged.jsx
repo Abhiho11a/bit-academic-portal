@@ -920,7 +920,13 @@ export function PdfRenderMerged({department,courses}){
     }
     return(
         <button
-          onClick={()=>{confirm("Are you sure want to download all courses as sigle pdf?")?downloadAllPdfs():''}}
+          onClick={()=>{
+            
+            if(Permissions.downloadAllPdfs)
+              confirm("Are you sure want to download all courses as single pdf?")?downloadAllPdfs():'';
+            else
+              alert("You dont have permission to download syllabus of all courses")
+          }}
           className="flex items-center justify-center gap-2
                      px-3 py-2 rounded-lg
                      bg-slate-800 text-white text-sm font-medium

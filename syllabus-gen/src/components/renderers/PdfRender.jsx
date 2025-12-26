@@ -10,9 +10,7 @@ import headerFull from "../../assets/images/header_img.png";
 
 
 export default function PdfRender({ courseData }) {
-  // Helpers
-  const safeList = (v) => (Array.isArray(v) ? v : v ? [v] : []);
-
+  
   // Convert unicode math alphabets to ASCII (robust approach)
   function normalizeMathText(str) {
     if (!str) return "";
@@ -64,9 +62,9 @@ export default function PdfRender({ courseData }) {
   function getDeptName(dept){
     switch(dept){
       case "CSE":
-        return "Computer Science And Engineering";
+        return "Computer Science and Engineering";
       case "ISE":
-        return "Information Science And Engineering";
+        return "Information Science and Engineering";
       case "EEE":
         return "Electrical and Electronics Engineering";
       case "ECE":
@@ -127,7 +125,7 @@ export default function PdfRender({ courseData }) {
 
   // LINE 1
   doc.setFont("Cambria", "bold");
-  doc.setFontSize(10.2);
+  doc.setFontSize(9);
   doc.setTextColor(0, 0, 0);
   doc.text(
     "K.R. Road, V. V. Pura, Bengaluru – 560 004",
@@ -138,7 +136,7 @@ export default function PdfRender({ courseData }) {
 
   // LINE 2
   doc.setFont("Cambria", "normal");
-  doc.setFontSize(10);
+  doc.setFontSize(9);
   doc.text(
     "Phone: +91(080) 26613237, 26615865 | Website: www.bit-bangalore.edu.in",
     mid,
@@ -148,7 +146,7 @@ export default function PdfRender({ courseData }) {
 
   // LINE 3 (email line in BLUE + bold)
   doc.setFont("Cambria", "bold");
-  doc.setFontSize(10);
+  doc.setFontSize(9);
   doc.setTextColor(0, 0, 180);
   doc.text(
     "E-mail : principalbit4@gmail.com, principal@bit-bangalore.edu.in",
@@ -159,7 +157,7 @@ export default function PdfRender({ courseData }) {
 
   // LINE 4 (NBA line)
   doc.setFont("Cambria", "normal");
-  doc.setFontSize(10);
+  doc.setFontSize(9);
   doc.setTextColor(0, 0, 0);
   doc.text(
     "Accredited by NBA: 9 UG Programs, NAAC A+ and QS-I Gauge (Gold Rating)",
@@ -260,6 +258,7 @@ doc.text(
       startY: curY,
       head: [
         [
+          "Sem",
           "Title",
           "Code",
           "Credits",
@@ -268,20 +267,23 @@ doc.text(
           "Exam Hours",
           "CIE",
           "SEE",
-          "Exam Type",
+          "Course Type",
+          "Exam Type"
         ],
       ],
       body: [
         [
+          data.sem|| '-',
           data.course_title || "-",
           data.course_code || "-",
           data.credits || "-",
-          data.pedagogy_hours || "-",
+          data.pedagogy || "-",
           data.ltps || "-",
           data.exam_hours || "-",
           data.cie || "-",
           data.see || "-",
           data.course_type || "-",
+          data.course_type.includes("T+L")?"Theory & Lab":data.course_type.includes("T")?"Theory":data.course_type.includes("L")?"Lab":"-"
         ],
       ],
       theme: "grid",
@@ -297,75 +299,75 @@ doc.text(
 
     // --- Objectives box (bullet points) ---
     function drawLabeledBox(title, content, yStart) {
-      const left = M.left;
-      const width = pageWidth - M.left - M.right;
-      const pad = 10;
-      let y = Number(yStart)+5 || M.top;
+  const left = M.left;
+  const width = pageWidth - M.left - M.right;
+  const pad = 10;
+  let y = Number(yStart) + 5 || M.top;
 
-      // Title - centered like sample
-      // Title - centered like sample
-doc.setFont('Lato-Bold', 'bold'); // Correct usage
-doc.setFontSize(12);
-title = String(title || "");
+  // 👉 PAGE BREAK CHECK
+  const spaceLeft = pageHeight - M.bottom - y;
+  if (spaceLeft < 50) {
+    doc.addPage();
+    y = M.top + 20; // reset Y on new page
+  }
 
-doc.text(title, centerX(), y, { align: "center" });
+  // Title
+  doc.setFont('Lato-Bold', 'bold');
+  doc.setFontSize(12);
+  title = String(title || "");
+  doc.text(title, centerX(), y, { align: "center" });
 
-// reset for body text
-doc.setFont("Tinos-Regular","normal");
-doc.setFontSize(11);
+  // Body font
+  doc.setFont("Tinos-Regular", "normal");
+  doc.setFontSize(9);
 
+  y += 8;
 
-      y += 8;
+  // Normalize + sanitize
+  content = normalizeMathText(String(content || ""));
+  content = sanitizeModuleText(content);
 
-      // Normalize + sanitize
-      content = normalizeMathText(String(content || ""));
-      content = sanitizeModuleText(content);
+  // Split into points
+  let parts = content
+    .replace(/\n+/g, "\n")
+    .split(/\. |\n/)
+    .map(p => p.trim())
+    .filter(p => p.length);
 
-      // Split into points by full stop or newline
-      let parts = content
-        .replace(/\n+/g, "\n")
-        .split(/\. |\n/)
-        .map((p) => p.trim())
-        .filter((p) => p.length);
+  let bulletLines = [];
+  let count = 1;
+  parts.forEach(p => {
+    const wrapped = doc.splitTextToSize(
+      count + ". " + p,
+      width - pad * 2
+    );
+    count++;
+    bulletLines.push(...wrapped);
+  });
 
-      // If no parts, show empty small box (better than nothing) - but we'll skip entire box if no content at higher level
-      if (parts.length === 0) {
-        parts = [];
-      }
+  const boxHeight = Math.max(30, bulletLines.length * 12 + pad * 2);
 
-      // Wrap each point
-      let bulletLines = [];
-      let count = 1;
-      parts.forEach((p) => {
-        const wrapped = doc.splitTextToSize(count+'. ' + p, width - pad * 2 );
-        count+=1; 
-        bulletLines.push(...wrapped);
-      });
+  // 👉 SECOND SAFETY CHECK (for tall boxes)
+  if (y + boxHeight > pageHeight - M.bottom) {
+    doc.addPage();
+    y = M.top + 60;
+  }
 
-      const boxHeight = Math.max(30, bulletLines.length * 12 + pad *2);
+  // Draw box
+  doc.setDrawColor(...GRAY_BORDER);
+  doc.setLineWidth(1.1);
+  doc.rect(left, y, width, boxHeight);
 
-      // Draw box
-      doc.setDrawColor(...GRAY_BORDER);
-      doc.setLineWidth(1.1);
-      doc.rect(left, y, width, boxHeight);
+  // Draw text
+  let ty = y + pad + 4;
+  bulletLines.forEach(ln => {
+    doc.text(String(ln), left + pad, ty);
+    ty += 14;
+  });
 
-      // Draw text
-      let ty = y + pad + 4;
-      bulletLines.forEach((ln) => {
-        ln = String(ln);
-        if (ln.startsWith("•")) {
-          doc.circle(left + pad, ty - 4, 2, "F");
-          doc.text(ln.replace("•", ""), left + pad + 5, ty);
-        } else {
-          doc.text(ln, left + pad, ty);
-        }
-        ty += 14;
-      });
+  return y + boxHeight + 18;
+}
 
-      
-
-      return y + boxHeight + 18;
-    }
 
     function drawLabeledBoxWebLinks(title, content, yStart) {
   const left = M.left;
@@ -373,13 +375,21 @@ doc.setFontSize(11);
   const pad = 10;
   let y = Number(yStart) + 5 || M.top;
 
+  // 👉 PAGE BREAK CHECK
+  const spaceLeft = pageHeight - M.bottom - y;
+  if (spaceLeft < 50) {
+    doc.addPage();
+    y = M.top + 70; // reset Y on new page
+  }
+
+
   // Title
   doc.setFont('Lato-Bold', 'bold');
   doc.setFontSize(12);
   doc.text(String(title || ""), centerX(), y, { align: "center" });
 
   doc.setFont("Tinos-Regular", "normal");
-  doc.setFontSize(11);
+  doc.setFontSize(9);
 
   y += 10;
 
@@ -501,7 +511,7 @@ doc.setFontSize(11);
       }
       
       // Always add footer
-      addFooter(doc.getNumberOfPages());
+      // addFooter(doc.getNumberOfPages());
       
       // Update curY after the table on each page
       curY = data.cursor.y;
@@ -520,7 +530,7 @@ doc.setFontSize(11);
 
   const left = M.left;
   const width = pageWidth - M.left - M.right;
-  const pad = 10;
+  const pad = 5;
 
   // Split content into points by full stop OR newline
   let parts = content
@@ -640,7 +650,7 @@ doc.setFontSize(11);
   // Page-break guard
   const approxTableHeight = 90;
   if (yStart + contentHeight + approxTableHeight > pageHeight - M.bottom) {
-    addFooter(doc.getNumberOfPages());
+    // addFooter(doc.getNumberOfPages());
     doc.addPage();
     yStart = M.top + 80;
   }
@@ -653,7 +663,7 @@ doc.setFontSize(11);
   yStart += 16;
   
   doc.setFont("Tinos-Regular", "normal");
-  doc.setFontSize(11);
+  doc.setFontSize(9);
   
   // Draw outer box for content
   doc.setDrawColor(...GRAY_BORDER);
@@ -683,7 +693,7 @@ doc.setFontSize(11);
       [meta.textbook || "", meta.chapter || "", meta.rbt || ""]
     ],
     styles: {
-      fontSize: 10,
+      fontSize: 9,
       cellPadding: 6,
       font: "Tinos-Regular",
       halign: "center",
@@ -721,9 +731,9 @@ doc.setFontSize(11);
 
         // page break guard before module header
         if (curY > pageHeight - M.bottom - 200) {
-          addFooter(doc.getNumberOfPages());
+          // addFooter(doc.getNumberOfPages());
           doc.addPage();
-          curY = M.top + 80;
+          curY = M.top + 10;
         }
 
 
@@ -737,11 +747,11 @@ doc.setFontSize(11);
     const spaceLeft = pageHeight - M.bottom - curY;
     
     // If not enough space for title + some rows, move to new page
-    if (spaceLeft < 100) {
-        addFooter(doc.getNumberOfPages());
+    if (spaceLeft < 40) {
+        // addFooter(doc.getNumberOfPages());
         doc.addPage();
         // addHeader(); // ✅ Add header on new page
-        curY = M.top + 95; // Start below header
+        curY = M.top + 0; // Start below header
     }
 
     // Title
@@ -760,16 +770,14 @@ doc.setFontSize(11);
       // place a small gap
       const approxTableHeight = 90;
       if (curY + 100 + approxTableHeight > pageHeight - M.bottom) {
-        addFooter(doc.getNumberOfPages());
-        doc.addPage();
-        // curY = M.top + 0;
+        // doc.addPage();
       }
       // curY = (doc.lastAutoTable && doc.lastAutoTable.finalY) ? doc.lastAutoTable.finalY + 24 : curY + 10;
       
       curY += 13;
       
       doc.setFont('Lato-Bold', 'bold');
-doc.setFontSize(13);
+doc.setFontSize(12);
 doc.setTextColor(0, 0, 0);        // pure black title
 doc.text("Textbooks", centerX(), curY, { align: "center" });
 
@@ -795,7 +803,7 @@ curY += 10;
           ]),
         theme: "grid",
         headStyles: { fillColor: [40, 40, 40], textColor: 255 },
-        styles: { fontSize: 10 },
+        styles: { fontSize: 9 },
         margin: { left: M.left, right: M.right },
         tableWidth: pageWidth - M.left - M.right,
       });
@@ -813,8 +821,10 @@ curY += 10;
     if (outComes_text.trim().length > 0) {
       const te = "At the end of the course, the student will be able to:\n"
       curY = drawLabeledBox("Course Outcomes", te+outComes_text, curY + 6);
+
     }
 
+    //Web Links Section
     const weblinks = Array.isArray(data.referral_links)
       ? data.referral_links
       : data.referral_links
@@ -838,41 +848,41 @@ curY += 10;
     const spaceLeft = pageHeight - M.bottom - curY;
     
     // If not enough space for title + some rows, move to new page
-    if (spaceLeft < 100) {
-        addFooter(doc.getNumberOfPages());
+    if (spaceLeft < 40) {
+        // addFooter(doc.getNumberOfPages());
         doc.addPage();
         // addHeader(); // ✅ Add header on new page
         curY = M.top + 95; // Start below header
     }
 
     if (activity_text.trim().length > 0) {
-      curY = drawLabeledBox("Activity-Based Learning (Suggested Activities in Class)/Practical-Based Learning", activity_text, curY + 6);
+      curY = drawLabeledBox("Activity-Based Learning/Practical-Based Learning", activity_text, curY + 6);
     }
     // ================== CO–PO MAPPING TABLE ==================
 if (data.copoMapping && Array.isArray(data.copoMapping.rows)) {
     const spaceLeft = pageHeight - M.bottom - curY;
 
-  if (spaceLeft < 100) {
-        addFooter(doc.getNumberOfPages());
+  if (spaceLeft < 200) {  
+        // addFooter(doc.getNumberOfPages());
         doc.addPage();
         // addHeader(); // ✅ Add header on new page
         curY = M.top + 60; // Start below header
     }
   
   // Title
-  // doc.setFont('Lato-Bold', 'bold'); // Correct usage
-  // doc.setFontSize(12);
-  // doc.text("CO–PO Mapping Table", centerX(), curY + 12, { align: "center" });
-  // curY += 13;
+  doc.setFont('Lato-Bold', 'bold'); // Correct usage
+  doc.setFontSize(12);
+  doc.text("CO–PO Mapping", centerX(), curY + 12, { align: "center" });
+  curY += 13;
   
   doc.setFont("Tinos-Regular","normal");
   // HEADERS (POs + PSOs)
-  const psoHeaders = data.copoMapping.rows[0]?.pso.map((_, i) => `PSO${i + 1}`) || [];
+  const psoHeaders = data.copoMapping?.rows[0]?.pso.map((_, i) => `PSO${i + 1}`) || [];
 const poHeaders = ["CO", ...data.copoMapping.headers, ...psoHeaders];
 
 
   // BODY ROWS (CO rows)
-  const copoRows = data.copoMapping.rows.map((row) => {
+  const copoRows = data.copoMapping?.rows?.map((row) => {
     return [
       row.co,
       ...row.vals,          // existing PO values
@@ -960,7 +970,7 @@ for (let i = 1; i <= totalPages; i++) {
   return (
     <button
       onClick={generateSyllabusPDF}
-      className="flex gap-1 items-center px-4 py-1.5 rounded-md bg-green-600 text-white cursor-pointer hover:bg-green-800 transition font-medium shadow-sm text-xs md:text-[15px]"
+      className="flex gap-1 items-center px-4 py-2 justify-center rounded-md bg-green-600 text-white cursor-pointer hover:bg-green-800 transition font-medium shadow-sm text-xs md:text-[15px]"
     >
       <Download size={20} />
       {/* <p className="text-xs md:text-[15px] hidden md:block">Download PDF</p> */}

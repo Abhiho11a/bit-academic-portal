@@ -15,7 +15,13 @@ export function resetFormData(setFormData){
             teaching_learning:"",
             referral_links:"",
             textbooks:[],
-            modules: [ {"no":1},{"no": 2},{"no": 3},{"no": 4},{"no": 5}],
+            modules: [ 
+              { no: 1, title: "", content: "", textbook: "", chapter: "", rbt: "" },
+              { no: 2, title: "", content: "", textbook: "", chapter: "", rbt: "" },
+              { no: 3, title: "", content: "", textbook: "", chapter: "", rbt: "" },
+              { no: 4, title: "", content: "", textbook: "", chapter: "", rbt: "" },
+              { no: 5, title: "", content: "", textbook: "", chapter: "", rbt: "" }
+            ],
             activity_based:"",
             copoMapping: {
                 headers: ["PO1","PO2","PO3","PO4","PO5","PO6","PO7","PO8","PO9","PO10","PO11"],
@@ -33,9 +39,9 @@ export function resetFormData(setFormData){
 export function getDeptName(dept){
     switch(dept){
       case "CSE":
-        return "Computer Science And Engineering";
+        return "Computer Science and Engineering";
       case "ISE":
-        return "Information Science And Engineering";
+        return "Information Science and Engineering";
       case "EEE":
         return "Electrical and Electronics Engineering";
       case "ECE":

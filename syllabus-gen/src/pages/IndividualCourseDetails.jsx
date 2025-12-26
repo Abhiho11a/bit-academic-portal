@@ -8,7 +8,7 @@ import PdfRender from "../components/renderers/PdfRender";
 import DocxRender from "../components/renderers/DocxRender";
 import { JsonRender } from "../components/renderers/JsonRender";
 
-export default function IndividualCourseDetails({courses,course_id,backToHome,setCourses}){
+export default function IndividualCourseDetails({courses,course_id,backToHome,setCourses,permissions}){
 
     //Retrieving particular course from courseData
     const [courseData,setCourseData] = useState([])
@@ -194,22 +194,18 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
 }
     {/* Function To fetch Data From DB */}
     async function fetchDataFromDb(){
-
-        setLoadingMsg("Loading...")
-        setTimeout(()=>{
-            setLoadingMsg("")
-        },1000)
-
+        setLoadingMsg("Fetching data from database...")
         const {data,error} = await supabase.from("courses").select("*").eq("id",course_id).single()
         if(error)
             alert("Error while loading")
         else
             setCourseData(data)
-
+        
         //update data in main course USESTATE TOO
         setCourses(data)
         //Check for array if the prev one is not of array then create array of current data
         setCourses(prev => Array.isArray(prev) ? prev.map(item => item.id === data.id ? data : item) : [data]);
+        setLoadingMsg("")
   }
 
 
@@ -354,7 +350,7 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
 
                     <button
                     onClick={() => {
-                        if(userData.subjectCode == courseData.course_code)
+                        if(userData?.subjectCode == courseData.course_code)
                         setEditForm("open");
                         else
                         {
@@ -590,8 +586,9 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
                                                         </table>
                                                     </div>
                                                 </div>
-                                                </>:<div><button onClick={() => addModulesDetails(idx)} className='bg-green-700 text-white group px-5 py-2 text-sm m-2 rounded-md cursor-pointer'>Add Mod-{idx+1} details</button>
-                                                <h2 className='hidden group-hover:block bg-gray-700'>Show</h2></div>}
+                                                </>:<h2 className='border-none px-2'>Module-{idx+1} Details Not Found</h2>}
+                                                {/* </>:<div><button onClick={() => addModulesDetails(idx)} className='bg-green-700 text-white group px-5 py-2 text-sm m-2 rounded-md cursor-pointer'>Add Mod-{idx+1} details</button>
+                                                <h2 className='hidden group-hover:block bg-gray-700'>Show</h2></div>} */}
                                             </div>
                                         );
                                     })}
@@ -645,7 +642,7 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
                         </div>
 
                         {/* Experiments Table */}
-                        {courseData.experiments.length === 0 ? (
+                        {courseData.experiments?.length === 0 ? (
                         <div className="text-center py-12 text-gray-500">
                             <p className="text-lg">No experiments added yet</p>
                             <p className="text-sm mt-2">Add your first experiment using the form above</p>
@@ -653,15 +650,15 @@ export default function IndividualCourseDetails({courses,course_id,backToHome,se
                         ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full border-collapse">
-                            <thead>
+                            {courseData.experiments && <thead>
                                 <tr className="bg-slate-700 text-white">
                                 <th className="px-4 py-3 text-left font-semibold w-20 border-r border-slate-500">Sl No</th>
                                 <th className="px-4 py-3 text-left font-semibold border-r border-slate-500">Experiment</th>
                                 <th className="px-4 py-3 text-center font-semibold w-32">Actions</th>
                                 </tr>
-                            </thead>
+                            </thead>}
                             <tbody>
-                                {courseData.experiments.map((exp, idx) => (
+                                {courseData.experiments?.map((exp, idx) => (
                                 <tr
                                     key={idx}
                                     className={`border-b border-gray-200 transition ${

@@ -49,26 +49,32 @@ const [department, setDepartment] = useState(
   editCourse: false,
   addBos: false,
   addFaculty: false,
+  mergePdfs:false,
+  downloadFullSyllaus:true
 });
 
 useEffect(() => {
   if (role === "dean") {
     setPermissions({
       addCourse: true,
-      viewCourse:false,
+      viewCourse:true,
       deleteCourse: false,
       editCourse: false,
       addBos: true,
       addFaculty: false,
+      mergePdfs:false,
+      downloadFullSyllaus:true
     });
   } else if (role === "bos") {
     setPermissions({
       addCourse: true,
-      viewCourse:false,
+      viewCourse:true,
       deleteCourse: true,
       editCourse: false,
       addBos: false,
       addFaculty: true,
+      mergePdfs:true,
+      downloadFullSyllaus:true
     });
   } else if (role === "faculty") {
     setPermissions({
@@ -78,13 +84,27 @@ useEffect(() => {
       editCourse: true,
       addBos: false,
       addFaculty: false,
+      mergePdfs:false,
+      downloadFullSyllaus:false
+    });
+  }else {
+    setPermissions({
+      addCourse: false,
+      viewCourse:false,
+      deleteCourse: false,
+      editCourse: false,
+      addBos: false,
+      addFaculty: false,
+      mergePdfs:false,
+      downloadFullSyllaus:false
     });
   }
 }, [role]);
 
-useEffect(() => {
-  console.log("Permissions updated:", permissions);
-}, [permissions]);
+
+// useEffect(() => {
+//   console.log("Permissions updated:", permissions);
+// }, [permissions]);
 
   
 
@@ -97,16 +117,10 @@ useEffect(() => {
   }
   
   async function fetchDataFromDb(){
-    setLoadingMsg("Fetching Data ...")
-    setTimeout(()=>{
-      setLoadingMsg("")
-    },1000)
+    setLoadingMsg("Fetching Data....")
     const {data:dbData,error} = await supabase.from("courses").select("*").eq("department",department)
-    
-    // setTimeout(()=>{
-    //   setLoadingMsg(null)
-    // },delay2)
     setCourses(dbData||[])
+    setLoadingMsg("")
   }
   
   useEffect(()=>{
@@ -430,43 +444,55 @@ const scrollRight = () => {
             </div>
 
             {/* Buttons – clean stacked layout for mobile */}
-            <div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3 max-w-md mx-auto justify-center">
+            <div className="mt-5 flex flex-wrap justify-center gap-2 md:gap-3 max-w-md mx-auto">
 
-              {/* Download */}
-              <PdfRenderMerged department={department} courses={courses}/>
+  {/* Download */}
+  <div className="flex justify-center">
+    <PdfRenderMerged department={department} courses={courses} />
+  </div>
 
-              {/* Merge */}
-              <button
-              onClick={() => showMergeModal(true)}
-              className="flex items-center justify-center gap-1
-                          px-3 py-2 rounded-lg
-                          border border-blue-500
-                          text-blue-600 text-sm font-medium
-                          bg-white hover:bg-blue-50 flex-1 hover:cursor-pointer hover:-translate-y-0.5 transition-all duration-300"
-              >
-                <Link size={18}/>
-                Merge
-              </button>
+  {/* Merge */}
+  <button
+    onClick={() => {
+      if(permissions.mergePdfs)
+      showMergeModal(true)
+      else
+        alert("You Dont have permissions to merge Documents")
+    }}
+    className="flex items-center justify-center gap-1
+               px-3 py-2 rounded-lg
+               border border-blue-500
+               text-blue-600 text-sm font-medium
+               bg-white hover:bg-blue-50
+               hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
+  >
+    <Link size={18} />
+    Merge
+  </button>
 
-              {role === "dean" && (
-              <button
-                onClick={() => navigate("/home/manage-bos")}
-                className="px-4 py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-800 hover:cursor-pointer hover:-translate-y-0.5 transition-all duration-300"
-              >
-                Manage BoS
-              </button>
-            )}
+  {role === "dean" && (
+    <button
+      onClick={() => navigate("/home/manage-bos")}
+      className="px-4 py-2 bg-purple-700 text-white rounded-lg
+                 hover:bg-purple-800 hover:-translate-y-0.5
+                 transition-all duration-300 cursor-pointer"
+    >
+      Manage BoS
+    </button>
+  )}
 
-            {role === "bos" && (
-              <button
-                onClick={() => navigate("/home/manage-faculty")}
-                className="px-3 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 hover:cursor-pointer hover:-translate-y-0.5 transition-all duration-300"
-              >
-                Manage Faculty
-              </button>
-            )}
+  {role === "bos" && (
+    <button
+      onClick={() => navigate("/home/manage-faculty")}
+      className="px-3 py-2 bg-blue-700 text-white rounded-lg
+                 hover:bg-blue-800 hover:-translate-y-0.5
+                 transition-all duration-300 cursor-pointer"
+    >
+      Manage Faculty
+    </button>
+  )}
+</div>
 
-            </div>
           </div>
 
           {/* 3️⃣ Course Table */}
@@ -506,6 +532,7 @@ const scrollRight = () => {
         course_id={detailedView_id}
         setCourses={setCourses}
         backToHome={() => backToHome()}
+        permissions={permissions}
         />
       )}
 

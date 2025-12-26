@@ -46,6 +46,8 @@ export default function RolePopup({role,setRole,closePopup}) {
             </h2>
             <hr className="border-gray-300 my-3" />
 
+            <h2 className="text-center text-xl text-gray-500">Select role</h2>
+
             <div className="flex flex-col gap-4 mt-4">
                 <div className="flex flex-1/4 bg-gray-800 text-white rounded-full py-3 items-center px-4 font-semibold hover:bg-gray-900 transition"
                       onClick={() => setSelectedRole("dean")}>

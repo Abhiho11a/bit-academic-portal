@@ -52,7 +52,7 @@ export default function AuthPage({ onContinue }) {
 
   let query = null;
 
-  // 🔹 DEAN CHECK
+  // DEAN CHECK
   if (role === "dean") {
     query = supabase
       .from("dean")
@@ -63,7 +63,7 @@ export default function AuthPage({ onContinue }) {
       .maybeSingle();
   }
 
-  // 🔹 BOS CHECK
+  // BOS CHECK
   else if (role === "bos") {
     query = supabase
       .from("bos_members")
@@ -75,7 +75,7 @@ export default function AuthPage({ onContinue }) {
       .maybeSingle();
   }
 
-  // 🔹 FACULTY CHECK
+  // FACULTY CHECK
   else if (role === "faculty") {
     query = supabase
       .from("faculty_members")
@@ -88,7 +88,7 @@ export default function AuthPage({ onContinue }) {
       .maybeSingle();
   }
 
-  // 🛑 SAFETY CHECK
+  // SAFETY CHECK
   if (!query) {
     alert("Invalid role selection.");
     setLoading(false);
@@ -103,7 +103,7 @@ export default function AuthPage({ onContinue }) {
     return;
   }
 
-  // 🔹 SEND OTP ONLY AFTER DB VERIFICATION
+  // SEND OTP ONLY AFTER DB VERIFICATION
   const { error: otpError } = await supabase.auth.signInWithOtp({
     email,
   });
